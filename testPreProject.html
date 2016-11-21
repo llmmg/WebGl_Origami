@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="Data/css/stylesheet.css">
+    <script src="Data/js/debug/webgl-debug.js"></script>
+    <script src="Data/js/commonFunctions.js"></script>
+    <script src="Data/js/gl-matrix-min.js"></script>
+    <script src="Data/js/webglTools.js"></script>
+    <script src="Data/js/mouseMotionHandling.js"></script>
+    <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec3 aVertexPosition;
+        attribute vec4 aColor;
+        uniform mat4 uMVMatrix;
+        uniform mat4 uPMatrix;
+        varying vec4 vColor;
+        void main(void) {
+          gl_PointSize = 5.0;
+          vColor = aColor;
+          gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        }
+
+
+
+    </script>
+    <script id="shader-fs" type="x-shader/x-fragment">
+        #ifdef GL_ES
+          precision highp float;
+        #endif
+          varying vec4 vColor;
+        void main(void) {
+          gl_FragColor = vColor;
+        }
+
+
+
+    </script>
+    <script src="testJs.js"></script>
+    <meta charset="UTF-8">
+    <title>Tests</title>
+</head>
+<body onload="initWebGL()">
+    <script>
+        displayTitle("Tests webgl for project", 1, 1, 1, 1, 1, 1, 1);
+    </script>
+    <canvas id="webgl-canvas" width="1000" height="600">
+        HTML5 is not supported
+    </canvas>
+
+</body>
+<script src="Data/js/mouseMotionHandling.js"></script>
+
+</html>
