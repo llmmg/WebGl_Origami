@@ -113,15 +113,15 @@ function cubeGemo() {
 }
 function initBuffers() {
 
-    addedPts=[];
-    //pts for the fold line
-    addedPts.push(0.0,1.2,0.1);
-    addedPts.push(0.0,-1.2,0.1);
-
-    colorLine.push(0.0, 0.0, 1.0, 1.0);
-    colorLine.push(0.0, 0.0, 1.0, 1.0);
-
-    lineIndices.push(0,1);
+    // addedPts=[];
+    // //pts for the fold line
+    // addedPts.push(0.0,1.2,0.1);
+    // addedPts.push(0.0,-1.2,0.1);
+    //
+    // colorLine.push(0.0, 0.0, 1.0, 1.0);
+    // colorLine.push(0.0, 0.0, 1.0, 1.0);
+    //
+    // lineIndices.push(0,1);
 
 
 
@@ -130,10 +130,10 @@ function initBuffers() {
     //points
     points = [];
     pointsIndices = [];
-    points.push(-1.0, 1.0, 0.1);
-    points.push(1.0, 1.0, 0.1);
-    points.push(1.0, -1.0, 0.1);
-    points.push(-1.0, -1.0, 0.1);
+    points.push(-0.5, 0.5, 0.1);
+    points.push(0.5, 0.5, 0.1);
+    points.push(0.5, -0.5, 0.1);
+    points.push(-0.5, -0.5, 0.1);
 
 
     //div by 3 because 1pts= 3coords
@@ -179,17 +179,27 @@ function initBuffers() {
     lineColorBuff=getVertexBufferWithVertices(colorLine);
     lineIndexBuff= getIndexBufferWithIndices(lineIndices);
 }
-
+// function drawNewPoints()
+// {
+//     x,y,z=0;
+//     for(i=0;i<addedPts.length;i++)
+//     {
+//
+//     }
+// }
 function drawScene() {
+
     glContext.clearColor(0.9, 0.9, 0.9, 1.0);
     glContext.enable(glContext.DEPTH_TEST);
     glContext.clear(glContext.COLOR_BUFFER_BIT | glContext.DEPTH_BUFFER_BIT);
     glContext.viewport(0, 0, c_width, c_height);
+    mat4.ortho(pMatrix, -1.0, 1.0, -1.0, 1.0, -2.0, 10.0);
 
-    mat4.identity(pMatrix);
+    // mat4.identity(pMatrix);
     mat4.identity(mvMatrix);
     rotateModelViewMatrixUsingQuaternion();
-    mat4.perspective(pMatrix, degToRad(40), c_width / c_height, 0.1, 1000.0);
+    // mat4.perspective(pMatrix, degToRad(50), c_width / c_height, 0.1, 1000.0);
+    // mat4.ortho(pMatrix, -1.2, 1.2, -1.2, 1.2, 1, 100);
 
     translationMat = mat4.create();
     mat4.identity(translationMat);
@@ -197,18 +207,18 @@ function drawScene() {
     mat4.multiply(mvMatrix, translationMat, mvMatrix);
 
     //conditions pour les boutons de rotations
-    if (isRotY) {
-        mat4.rotateY(mvMatrix, mvMatrix, rotationAroundY);
-    }
-    else {
-        mat4.rotateY(mvMatrix, mvMatrix, positionSceneY);
-    }
-    if (isRotX) {
-        mat4.rotateX(mvMatrix, mvMatrix, rotationAroundX);
-    }
-    else {
-        mat4.rotateX(mvMatrix, mvMatrix, positionSceneX);
-    }
+    // if (isRotY) {
+    //     mat4.rotateY(mvMatrix, mvMatrix, rotationAroundY);
+    // }
+    // else {
+    //     mat4.rotateY(mvMatrix, mvMatrix, positionSceneY);
+    // }
+    // if (isRotX) {
+    //     mat4.rotateX(mvMatrix, mvMatrix, rotationAroundX);
+    // }
+    // else {
+    //     mat4.rotateX(mvMatrix, mvMatrix, positionSceneX);
+    // }
 
     glContext.uniformMatrix4fv(prg.pMatrixUniform, false, pMatrix);
     glContext.uniformMatrix4fv(prg.mvMatrixUniform, false, mvMatrix);
@@ -223,13 +233,39 @@ function drawScene() {
     drawFoldLine();
 
 }
+function addPointOnGLScene(pX, pY) {
+    if (addedPts.length >= 6) {
+        addedPts = [];
+        lineIndices = [];
+    }
+    addedPts.push(pX, pY, 0.1);
+    lineIndices.push(lineIndices.length);
+    colorLine.push(1.0,0.0,0.5,1.0);
+    // console.log("coords="+addedPts[0]+" "+addedPts[1]+" "+addedPts[2]);
+    initBuffers();
+}
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
 function drawFoldLine() {
     glContext.bindBuffer(glContext.ARRAY_BUFFER, lineVertexBuffer);
     glContext.vertexAttribPointer(prg.vertexPositionAttribute, 3, glContext.FLOAT, false, 0, 0);
     glContext.bindBuffer(glContext.ARRAY_BUFFER, lineColorBuff);
     glContext.vertexAttribPointer(prg.colorAttribute, 4, glContext.FLOAT, false, 0, 0);
+
+    if(addedPts.length>=6)
+    {
+        // console.log("addedpoints size="+addedPts.length);
+        glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, lineIndexBuff);
+        glContext.drawElements(glContext.LINE_STRIP, lineIndices.length, glContext.UNSIGNED_SHORT, 0);
+    }
     glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, lineIndexBuff);
-    glContext.drawElements(glContext.LINE_STRIP, lineIndices.length, glContext.UNSIGNED_SHORT, 0);
+    glContext.drawElements(glContext.POINTS, lineIndices.length, glContext.UNSIGNED_SHORT, 0);
+
 }
 function drawPoints(){
     glContext.bindBuffer(glContext.ARRAY_BUFFER, ptsColorsBuffer);

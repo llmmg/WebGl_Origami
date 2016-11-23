@@ -21,6 +21,7 @@
 
 
 
+
     </script>
     <script id="shader-fs" type="x-shader/x-fragment">
         #ifdef GL_ES
@@ -33,20 +34,31 @@
 
 
 
+
     </script>
     <script src="testJs.js"></script>
     <meta charset="UTF-8">
     <title>Tests</title>
 </head>
 <body onload="initWebGL()">
-    <script>
-        displayTitle("Tests webgl for project", 1, 1, 1, 1, 1, 1, 1);
-    </script>
-    <canvas id="webgl-canvas" width="1000" height="600">
-        HTML5 is not supported
-    </canvas>
+<script>
+    displayTitle("Tests webgl for project", 1, 1, 1, 1, 1, 1, 1);
+</script>
+<canvas id="webgl-canvas" width="600" height="600">
+    HTML5 is not supported
+</canvas>
 
 </body>
 <script src="Data/js/mouseMotionHandling.js"></script>
-
+<script id='code-js' type="text/javascript">
+    var canvas = document.getElementById('webgl-canvas');
+    canvas.addEventListener('click', function (evt) {
+        var mousePos = getMousePos(canvas, evt);
+        var pX = (mousePos.x - canvas.width / 2.0) / canvas.width * 2.0;
+        var pY = (canvas.height / 2.0 - mousePos.y) / canvas.height * 2.0;
+        var message = 'point: ' + pX + ',' + pY;
+        console.log(message);
+        addPointOnGLScene(pX, pY);
+    }, false);
+</script>
 </html>
