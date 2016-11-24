@@ -201,35 +201,100 @@ function findNewPoints() {
     //d=y-bx
     d = y1 - b * x1;
 
+
+    side1 = closestSide(tmp, [x1, y1]);
+    side2 = closestSide(tmp, [x2, y2]);
+    sides = [];
+
+    sides.push(side1, side2);
+
     inter = []; //x,y
 
     //find all intersections
     for (i = 0; i < tmp.length; i++) {
-        console.log("tmp[" + (i + 1) % tmp.length + "][0]:" + tmp[(i + 1) % tmp.length][0]);
+        // console.log("tmp[" + (i + 1) % tmp.length + "][0]:" + tmp[(i + 1) % tmp.length][0]);
 
-        //(i+1)%tmp.length because at the last iteration it need to act like "loop" (go back to 0...)
-        if ((tmp[i][0] - tmp[(i + 1) % tmp.length][0]) == 0) {
-            //when vertical: intersection in x = a pts of the line
-            x = tmp[i][0];
-            y = b * x + d;
-        } else {
-            //---border line---
-            //y=ax+c
-            a0 = (tmp[i][1] - tmp[i + 1][1]) / (tmp[i][0] - tmp[i + 1][0]);
-            //c0 = y-ax
-            c0 = tmp[i][1] - a0 * tmp[i][0];
-            //x
-            x = (d - c0) / (a0 - b);
-            //y
-            y = a0 * x + c0;
-        }
-        inter.push([x, y]);
+        // //(i+1)%tmp.length because at the last iteration it need to act like "loop" (go back to 0...)
+        // if ((tmp[i][0] - tmp[(i + 1) % tmp.length][0]) == 0) {
+        //     //when vertical: intersection in x = a pts of the line
+        //     x = tmp[i][0];
+        //     y = b * x + d;
+        // } else {
+        //     //---border line---
+        //     //y=ax+c
+        //     a0 = (tmp[i][1] - tmp[i + 1][1]) / (tmp[i][0] - tmp[i + 1][0]);
+        //     //c0 = y-ax
+        //     c0 = tmp[i][1] - a0 * tmp[i][0];
+        //     //x
+        //     x = (d - c0) / (a0 - b);
+        //     //y
+        //     y = a0 * x + c0;
+        // }
+        foldL = [[x1, y1],[x2, y2]];
+        //TODO: push if valid ONLY
+        inter.push(intersection([tmp[i],tmp[(i+1)%tmp.length]],foldL));
 
     }
 
     return inter;
 
 }
+//where line=[[x1,y1],[x2,y2]]
+function intersection(line1, foldLine) {
+    //---fold line equation---
+    //y=bx+d
+    b = (foldLine[0][1] - foldLine[1][1]) / (foldLine[0][0] - foldLine[1][0]);
+    //d=y-bx
+    d = foldLine[0][1] - b * foldLine[0][0];
+
+    if ((line1[0][0] - line1[1][0]) == 0) {
+        //when vertical: intersection in x = a pts of the line
+        x = line1[0][0];
+        y = b * x + d;
+    } else {
+        //---border line---
+        //y=ax+c
+        a0 = (line1[0][1] - line1[1][1]) / (line1[0][0] - line1[1][0]);
+        //c0 = y-ax
+        c0 = line1[0][1] - a0 * line1[0][0];
+        //x
+        x = (d - c0) / (a0 - b);
+        //y
+        y = a0 * x + c0;
+    }
+    return [x, y];
+}
+//compute distance between fold points and border points
+//return closest side of a point
+function closestSide(sidesPts, oneFoldPoint) {
+    values = [2]; //store the 2 borders pts
+    values = [sidesPts[0], sidesPts[1]];
+    dist1 = distance(sidesPts[0], oneFoldPoint);
+    dist2 = distance(sidesPts[1], oneFoldPoint);
+    minVal = dist1 + dist2;
+    //closest pts of 1st points
+    for (i = 0; i < sidesPts.length; i++) {
+        // dist=Math.sqrt(Math.pow((tmp[0][0]-tmp[1][0]),2)+Math.pow((tmp[0][1]-tmp[1][1]),2))
+        dist1 = distance(sidesPts[i], oneFoldPoint);
+        dist2 = distance(sidesPts[(i + 1) % sidesPts.length], oneFoldPoint);
+        res = dist1 + dist2;
+
+        //store min dist + pts
+        if ((res) < minVal) {
+            minVal = res;
+            values = [sidesPts[i], sidesPts[(i + 1) % sidesPts.length]];
+        }
+    }
+    //=> value contain the points of line where intersection 1 is
+
+    return values;
+}
+function distance(ptsA, ptsB) {
+    return Math.sqrt(Math.pow((ptsA[0] - ptsB[0]), 2) + Math.pow((ptsA[1] - ptsB[1]), 2));
+}
+// function validIntersec(intersec) {
+//
+// }
 function drawScene() {
 
     glContext.clearColor(0.9, 0.9, 0.9, 1.0);
