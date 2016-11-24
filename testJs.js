@@ -211,7 +211,7 @@ function findNewPoints() {
     inter = []; //x,y
 
     //find all intersections
-    for (i = 0; i < tmp.length; i++) {
+    for (let i = 0; i < tmp.length; i++) {
         // console.log("tmp[" + (i + 1) % tmp.length + "][0]:" + tmp[(i + 1) % tmp.length][0]);
 
         // //(i+1)%tmp.length because at the last iteration it need to act like "loop" (go back to 0...)
@@ -230,9 +230,12 @@ function findNewPoints() {
         //     //y
         //     y = a0 * x + c0;
         // }
-        foldL = [[x1, y1],[x2, y2]];
+        foldL = [[x1, y1], [x2, y2]];
         //TODO: push if valid ONLY
-        inter.push(intersection([tmp[i],tmp[(i+1)%tmp.length]],foldL));
+        tmpInter = intersection([tmp[i], tmp[(i + 1) % tmp.length]], foldL);
+        if (validIntersec(tmpInter, tmp)) {
+            inter.push(tmpInter);
+        }
 
     }
 
@@ -292,9 +295,42 @@ function closestSide(sidesPts, oneFoldPoint) {
 function distance(ptsA, ptsB) {
     return Math.sqrt(Math.pow((ptsA[0] - ptsB[0]), 2) + Math.pow((ptsA[1] - ptsB[1]), 2));
 }
-// function validIntersec(intersec) {
-//
-// }
+
+//intersec is a point ([x,y])
+//check if intersec between one corners pair
+function validIntersec(intersec, corners) {
+
+    console.log(corners);
+
+    for (j = 0; j < corners.length; j++) {
+        ab = []; //[x,y]
+        ab.push(corners[(j + 1) % corners.length][0] - corners[j][0]);
+        ab.push(corners[(j + 1) % corners.length][1] - corners[j][1]);
+
+        ac = [];
+        ac.push(intersec[0] - corners[j][0]);
+        ac.push(intersec[1] - corners[j][1]);
+
+        //x*AB=AC x€[0,1]? if so, intersec is valide
+        //as AB//AC => AC(x)/AB(x) == AC(y)/AB(y)
+        //1st test if parallel => alpha=180°
+        angleRad = Math.acos((ab[0] * ac[0] + ab[1] * ac[1]) / (vectorMagnitude(ab) * vectorMagnitude(ac)));
+        angle = angleRad * 180 / Math.PI;
+        if (angle == 0) {
+            //2nd test if x*AB=AC with x[0,1]
+            var rat = (ab[0] == 0) ? ac[1] / ab[1] : ac[0] / ab[0];
+
+            if (rat >= 0 && rat <= 1) {
+                //valid
+                return true;
+            }
+        }
+    }
+    return false;
+}
+function vectorMagnitude(vector) {
+    return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+}
 function drawScene() {
 
     glContext.clearColor(0.9, 0.9, 0.9, 1.0);
