@@ -33,14 +33,14 @@ var colors2 = [];
 var ptsColorsBuffer = null;
 
 //the two points from user
-var addedPts=[];
+var addedPts = [];
 
 //for the line
-var lineVertexBuffer=null;
-var lineColorBuff=null;
-var lineIndexBuff=null;
-var colorLine=[];
-var lineIndices=[];
+var lineVertexBuffer = null;
+var lineColorBuff = null;
+var lineIndexBuff = null;
+var colorLine = [];
+var lineIndices = [];
 
 
 function rotateOnYEverySecond(_rotationAroundY) {
@@ -124,7 +124,6 @@ function initBuffers() {
     // lineIndices.push(0,1);
 
 
-
     // cubeGemo();
 
     //points
@@ -137,7 +136,7 @@ function initBuffers() {
 
 
     //div by 3 because 1pts= 3coords
-    for (i = 0; i <points.length/3; i++) {
+    for (i = 0; i < points.length / 3; i++) {
         colors2.push(1.0, 0.0, 0.0, 1.0);
         pointsIndices.push(pointsIndices.length);
 
@@ -148,21 +147,10 @@ function initBuffers() {
     indices.push(0);
 
     //draw rectangle
-    for(i=0;i<points.length;i++)
-    {
+    for (i = 0; i < points.length; i++) {
         vertices.push(points[i]);
 
     }
-    // vertices.push(0.0, 1.0, 0.1);
-    // vertices.push(-1.0, -1.0, 0.1);
-    // vertices.push(1.0, -1.0, 0.1);
-
-
-    // colors.push(0.0, 0.0, 0.0, 1.0);
-    // colors.push(0.0, 0.0, 0.0, 1.0);
-    // colors.push(0.0, 0.0, 0.0, 1.0);
-
-    // indices.push(0, 1, 2, 0);
 
 
     vertexBuffer = getVertexBufferWithVertices(vertices);
@@ -175,18 +163,73 @@ function initBuffers() {
     ptsColorsBuffer = getVertexBufferWithVertices(colors2);
 
     //test lines
-    lineVertexBuffer=getVertexBufferWithVertices(addedPts);
-    lineColorBuff=getVertexBufferWithVertices(colorLine);
-    lineIndexBuff= getIndexBufferWithIndices(lineIndices);
+    lineVertexBuffer = getVertexBufferWithVertices(addedPts);
+    lineColorBuff = getVertexBufferWithVertices(colorLine);
+    lineIndexBuff = getIndexBufferWithIndices(lineIndices);
 }
-// function drawNewPoints()
-// {
-//     x,y,z=0;
-//     for(i=0;i<addedPts.length;i++)
-//     {
-//
-//     }
-// }
+function bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices) {
+
+    //test points
+    pointsIndexBuffer = getIndexBufferWithIndices(pointsIndices);
+    pointsBuffer = getVertexBufferWithVertices(points);
+    ptsColorsBuffer = getVertexBufferWithVertices(colors2);
+
+    //test lines
+    lineVertexBuffer = getVertexBufferWithVertices(addedPts);
+    lineColorBuff = getVertexBufferWithVertices(colorLine);
+    lineIndexBuff = getIndexBufferWithIndices(lineIndices);
+}
+function findNewPoints() {
+
+    //fold line points
+    x1 = addedPts[0];
+    y1 = addedPts[1];
+    x2 = addedPts[3];
+    y2 = addedPts[4];
+
+    //store points
+    var tmp = []; //[n][x, y or z]
+
+    //get all points
+    for (i = 0; i < points.length; i += 3) {
+        tmp.push([points[i], points[i + 1]]);
+    }
+
+    //---fold line equation---
+    //y=bx+d
+    b = (y1 - y2) / (x1 - x2);
+    //d=y-bx
+    d = y1 - b * x1;
+
+    inter = []; //x,y
+
+    //find all intersections
+    for (i = 0; i < tmp.length; i++) {
+        console.log("tmp[" + (i + 1) % tmp.length + "][0]:" + tmp[(i + 1) % tmp.length][0]);
+
+        //(i+1)%tmp.length because at the last iteration it need to act like "loop" (go back to 0...)
+        if ((tmp[i][0] - tmp[(i + 1) % tmp.length][0]) == 0) {
+            //when vertical: intersection in x = a pts of the line
+            x = tmp[i][0];
+            y = b * x + d;
+        } else {
+            //---border line---
+            //y=ax+c
+            a0 = (tmp[i][1] - tmp[i + 1][1]) / (tmp[i][0] - tmp[i + 1][0]);
+            //c0 = y-ax
+            c0 = tmp[i][1] - a0 * tmp[i][0];
+            //x
+            x = (d - c0) / (a0 - b);
+            //y
+            y = a0 * x + c0;
+        }
+        inter.push([x, y]);
+
+    }
+
+    return inter;
+
+}
 function drawScene() {
 
     glContext.clearColor(0.9, 0.9, 0.9, 1.0);
@@ -234,15 +277,29 @@ function drawScene() {
 
 }
 function addPointOnGLScene(pX, pY) {
+
     if (addedPts.length >= 6) {
         addedPts = [];
         lineIndices = [];
     }
+
     addedPts.push(pX, pY, 0.1);
     lineIndices.push(lineIndices.length);
-    colorLine.push(1.0,0.0,0.5,1.0);
-    // console.log("coords="+addedPts[0]+" "+addedPts[1]+" "+addedPts[2]);
-    initBuffers();
+    colorLine.push(1.0, 0.0, 0.5, 1.0);
+    // initBuffers();
+
+    //add new points only if a line is drawn
+    if (addedPts.length >= 5) {
+        tmp = findNewPoints();
+        for (i = 0; i < tmp.length; i++) {
+            points.push(tmp[i][0], tmp[i][1], 0.1);
+            colors2.push(1.0, 0.0, 0.0, 1.0);
+            pointsIndices.push(pointsIndices.length);
+        }
+    }
+
+    //update buffers
+    bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices);
 }
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
@@ -257,8 +314,7 @@ function drawFoldLine() {
     glContext.bindBuffer(glContext.ARRAY_BUFFER, lineColorBuff);
     glContext.vertexAttribPointer(prg.colorAttribute, 4, glContext.FLOAT, false, 0, 0);
 
-    if(addedPts.length>=6)
-    {
+    if (addedPts.length >= 6) {
         // console.log("addedpoints size="+addedPts.length);
         glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, lineIndexBuff);
         glContext.drawElements(glContext.LINE_STRIP, lineIndices.length, glContext.UNSIGNED_SHORT, 0);
@@ -267,7 +323,7 @@ function drawFoldLine() {
     glContext.drawElements(glContext.POINTS, lineIndices.length, glContext.UNSIGNED_SHORT, 0);
 
 }
-function drawPoints(){
+function drawPoints() {
     glContext.bindBuffer(glContext.ARRAY_BUFFER, ptsColorsBuffer);
     glContext.vertexAttribPointer(prg.colorAttribute, 4, glContext.FLOAT, false, 0, 0);
     glContext.bindBuffer(glContext.ARRAY_BUFFER, pointsBuffer);
