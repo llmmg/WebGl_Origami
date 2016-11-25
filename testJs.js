@@ -179,6 +179,24 @@ function bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices) 
     lineColorBuff = getVertexBufferWithVertices(colorLine);
     lineIndexBuff = getIndexBufferWithIndices(lineIndices);
 }
+//put all pts that are on one side of fold line in a list and all other in another list
+function separatePoints(intersecPts, layerPts) {
+    listA = [];
+    listB = [];
+
+    for (j = 0; j < layerPts.length; j++) {
+        //if the pts is lower in x (or y) for both intersection pts
+        if ((intersecPts[0][0] > layerPts[j][0] && intersecPts[1][0] > layerPts[j][0]) || (intersecPts[0][1] > layerPts[j][1] && intersecPts[1][1] > layerPts[j][1]))
+        {
+            listA.push(layerPts[j]);
+        }else
+        {
+            listB.push(layerPts[j]);
+        }
+    }
+}
+
+//return intersections points as an array of vectors ([[x,y]])
 function findNewPoints() {
 
     //fold line points
@@ -202,36 +220,11 @@ function findNewPoints() {
     d = y1 - b * x1;
 
 
-    side1 = closestSide(tmp, [x1, y1]);
-    side2 = closestSide(tmp, [x2, y2]);
-    sides = [];
-
-    sides.push(side1, side2);
-
     inter = []; //x,y
 
     //find all intersections
     for (let i = 0; i < tmp.length; i++) {
-        // console.log("tmp[" + (i + 1) % tmp.length + "][0]:" + tmp[(i + 1) % tmp.length][0]);
-
-        // //(i+1)%tmp.length because at the last iteration it need to act like "loop" (go back to 0...)
-        // if ((tmp[i][0] - tmp[(i + 1) % tmp.length][0]) == 0) {
-        //     //when vertical: intersection in x = a pts of the line
-        //     x = tmp[i][0];
-        //     y = b * x + d;
-        // } else {
-        //     //---border line---
-        //     //y=ax+c
-        //     a0 = (tmp[i][1] - tmp[i + 1][1]) / (tmp[i][0] - tmp[i + 1][0]);
-        //     //c0 = y-ax
-        //     c0 = tmp[i][1] - a0 * tmp[i][0];
-        //     //x
-        //     x = (d - c0) / (a0 - b);
-        //     //y
-        //     y = a0 * x + c0;
-        // }
         foldL = [[x1, y1], [x2, y2]];
-        //TODO: push if valid ONLY
         tmpInter = intersection([tmp[i], tmp[(i + 1) % tmp.length]], foldL);
         if (validIntersec(tmpInter, tmp)) {
             inter.push(tmpInter);
@@ -267,6 +260,7 @@ function intersection(line1, foldLine) {
     }
     return [x, y];
 }
+//DEPRECATED REPLACED BY INTERSECTION
 //compute distance between fold points and border points
 //return closest side of a point
 function closestSide(sidesPts, oneFoldPoint) {
@@ -292,6 +286,7 @@ function closestSide(sidesPts, oneFoldPoint) {
 
     return values;
 }
+//return distance between ptsA and ptsB (where pts are vectors[x,y])
 function distance(ptsA, ptsB) {
     return Math.sqrt(Math.pow((ptsA[0] - ptsB[0]), 2) + Math.pow((ptsA[1] - ptsB[1]), 2));
 }
@@ -328,6 +323,7 @@ function validIntersec(intersec, corners) {
     }
     return false;
 }
+//return ||vector||
 function vectorMagnitude(vector) {
     return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
 }
@@ -378,6 +374,7 @@ function drawScene() {
 
 }
 function addPointOnGLScene(pX, pY) {
+
 
     if (addedPts.length >= 6) {
         addedPts = [];
