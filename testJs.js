@@ -180,40 +180,41 @@ function bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices) 
     lineIndexBuff = getIndexBufferWithIndices(lineIndices);
 }
 //do axial simetry of ptsToInverse by intersectPts line
-function axialSimetry(ptsToInverse,intersectPts)
-{
+function axialSymmetry(ptsToInverse, intersectPts) {
 
-    reversedPts=[]
+    reversedPts = []
     //f(0)=b
-    b=y0ofMyLine(intersectPts[0],intersectPts[1]);
+    b = y0ofMyLine(intersectPts[0], intersectPts[1]);
 
-    for(var i=0;i<ptsToInverse.length;i++)
-    {
+    console.log("y= " + b);
+    console.log("intersection:" + intersectPts[0] + ";" + intersectPts[1]);
+
+    for (var i = 0; i < ptsToInverse.length; i++) {
         //dy/dx (slope)
-        p=(intersectPts[0][1]-intersectPts[1][1])/(intersectPts[0][0]-intersectPts[1][0]);
+        p = (intersectPts[0][1] - intersectPts[1][1]) / (intersectPts[0][0] - intersectPts[1][0]);
 
 
-        newX=((1-p*p)*ptsToInverse[i][0]+2*p*ptsToInverse[i][1]-2*b*p)/(1+p*p);
-        newY=(2*p*ptsToInverse[i][0]-(1-p*p)*ptsToInverse[i][1]+2*b)/(1+p*p)
+        newX = ((1 - p * p) * ptsToInverse[i][0] + 2 * p * ptsToInverse[i][1] - 2 * b * p) / (1 + p * p);
+        newY = (2 * p * ptsToInverse[i][0] - (1 - p * p) * ptsToInverse[i][1] + 2 * b) / (1 + p * p)
 
-        reversedPts.push([newX,newY]);
+        reversedPts.push([newX, newY]);
     }
 
     return reversedPts;
 }
 
 //return y of f(0) where ptA and ptB are pts of the f(x) line
-function y0ofMyLine(ptA, ptB)
-{
+function y0ofMyLine(ptA, ptB) {
     // AB=OB-OA
-    vAb.push(ptB[0]-ptA[0]);
-    vAb.push(ptB[1]-ptB[1]);
+    vAb = [];
+    vAb.push(ptB[0] - ptA[0]);
+    vAb.push(ptB[1] - ptA[1]);
 
-    //0=ax+vAbX*alpha
-    alpha=(-ptA[0]/vAb[0]);
+    //0=aX+vAbX*alpha
+    alpha = (-ptA[0] / vAb[0]);
 
     //found y
-    y=ptA[1]+alpha*vAb[1];
+    y = ptA[1] + alpha * vAb[1];
 
     return y;
 }
@@ -224,24 +225,25 @@ function separatePoints(intersecPts, layerPts) {
     listB = [];
 
     //get all points
-    var tmp=[];
+    var tmp = [];
     for (var j = 0; j < layerPts.length; j += 3) {
         tmp.push([layerPts[j], layerPts[j + 1]]);
     }
 
     for (j = 0; j < tmp.length; j++) {
         //if the pts is lower in x (or y) for both intersection pts
-        if ((intersecPts[0][0] > tmp[j][0] && intersecPts[1][0] > tmp[j][0]) || (intersecPts[0][1] > tmp[j][1] && intersecPts[1][1] > tmp[j][1]))
-        {
+        if ((intersecPts[0][0] > tmp[j][0] && intersecPts[1][0] > tmp[j][0]) || (intersecPts[0][1] > tmp[j][1] && intersecPts[1][1] > tmp[j][1])) {
             listA.push(tmp[j]);
-        }else
-        {
+        } else {
             listB.push(tmp[j]);
         }
     }
     console.log("separatePoints");
     console.log(listA);
     console.log(listB);
+
+    //[[x,y]]
+    return [listA, listB]
 }
 
 //return intersections points as an array of vectors ([[x,y]])
@@ -436,17 +438,33 @@ function addPointOnGLScene(pX, pY) {
     if (addedPts.length >= 5) {
         tmp = findNewPoints();
         // test
-        separatePoints(tmp,points);
+        sepPts = separatePoints(tmp, points);
 
+        somePts = axialSymmetry(sepPts[1], tmp);
+
+        //add pts in global point list
         for (i = 0; i < tmp.length; i++) {
             points.push(tmp[i][0], tmp[i][1], 0.1);
             colors2.push(1.0, 0.0, 0.0, 1.0);
             pointsIndices.push(pointsIndices.length);
         }
+        derpColors = [0.0, 1.0, 0.0, 1.0];
+        pushPtsGlobal(somePts, derpColors);
+        derpColors2 = [0.0, 0.0, 1.0, 1.0];
+        pushPtsGlobal(sepPts[0], derpColors2);
     }
 
     //update buffers
     bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices);
+}
+//add pts in global point list
+function pushPtsGlobal(pts, col) {
+    for (i = 0; i < pts.length; i++) {
+        points.push(pts[i][0], pts[i][1], 0.1);
+        for (j = 0; j < col.length; j++)
+            colors2.push(col[j]);
+        pointsIndices.push(pointsIndices.length);
+    }
 }
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
