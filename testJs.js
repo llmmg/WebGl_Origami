@@ -231,13 +231,41 @@ function separatePoints(intersecPts, layerPts) {
     }
 
     for (j = 0; j < tmp.length; j++) {
-        //if the pts is lower in x (or y) for both intersection pts
-        if ((intersecPts[0][0] > tmp[j][0] && intersecPts[1][0] > tmp[j][0]) || (intersecPts[0][1] > tmp[j][1] && intersecPts[1][1] > tmp[j][1])) {
+        //if point is on the same line as the two interesction pts
+        // if ((tmp[j][0] == intersecPts[0][0] && tmp[j][1] == intersecPts[1][1]) || (tmp[j][0] == intersecPts[1][0] && tmp[j][1] == intersecPts[0][1])) {
+        //     listA.push(tmp[j]);
+        // } else {
+        //     // //same x as intersectPts and y>
+        //     // if ((tmp[j][0] == intersecPts[0][0] && tmp[j][1] > intersecPts[0][1]) || (tmp[j][0] == intersecPts[1][0]) && tmp[j][1] > intersecPts[1][1]) {
+        //     //
+        //     //     listA.push(tmp[j]);
+        //     //     console.log("Same x");
+        //     // }
+        //     // else {
+        //     //     if ((tmp[j][1] == intersecPts[0][1] || tmp[j][1] == intersecPts[1][1]) && (tmp[j][0] > intersecPts[0][0] || tmp[j][0] > intersecPts[1][0])) {
+        //     //         listA.push(tmp[j]);
+        //     //         console.log("Same y");
+        //     //     }
+        //     //     else {
+        //     //         listB.push(tmp[j]);
+        //     //     }
+        //     // }
+        //
+        //
+        //     listB.push(tmp[j]);
+        // }
+
+        //Everithing that is right and/or up of the line must go on the same list
+        if((tmp[j][0]>intersecPts[0][0] || tmp[j][0]>intersecPts[1][0]) && (tmp[j][1]>intersecPts[0][1] || tmp[j][1]>intersecPts[1][1]))
+        {
             listA.push(tmp[j]);
-        } else {
+        }
+        else {
+
             listB.push(tmp[j]);
         }
     }
+
     console.log("separatePoints");
     console.log(listA);
     console.log(listB);
@@ -246,6 +274,7 @@ function separatePoints(intersecPts, layerPts) {
     return [listA, listB]
 }
 
+//TODO: add parameter listPoints (this will be usefull to find intersections on each fold stack...)
 //return intersections points as an array of vectors ([[x,y]])
 function findNewPoints() {
 
@@ -278,6 +307,7 @@ function findNewPoints() {
         tmpInter = intersection([tmp[i], tmp[(i + 1) % tmp.length]], foldL);
         if (validIntersec(tmpInter, tmp)) {
             inter.push(tmpInter);
+            //insert ADot between tmp[i] and tmp[i+1]
         }
 
     }
@@ -437,7 +467,7 @@ function addPointOnGLScene(pX, pY) {
     //add new points only if a line is drawn
     if (addedPts.length >= 5) {
         tmp = findNewPoints();
-        // test
+        // test pts from each sides
         sepPts = separatePoints(tmp, points);
 
         somePts = axialSymmetry(sepPts[1], tmp);
@@ -452,6 +482,8 @@ function addPointOnGLScene(pX, pY) {
         pushPtsGlobal(somePts, derpColors);
         derpColors2 = [0.0, 0.0, 1.0, 1.0];
         pushPtsGlobal(sepPts[0], derpColors2);
+        derpColors2 = [1.0, 0.0, 1.0, 1.0];
+        pushPtsGlobal(sepPts[1], derpColors2);
     }
 
     //update buffers
@@ -460,7 +492,7 @@ function addPointOnGLScene(pX, pY) {
 //add pts in global point list
 function pushPtsGlobal(pts, col) {
     for (i = 0; i < pts.length; i++) {
-        points.push(pts[i][0], pts[i][1], 0.1);
+        points.push(pts[i][0], pts[i][1], 0.1001);
         for (j = 0; j < col.length; j++)
             colors2.push(col[j]);
         pointsIndices.push(pointsIndices.length);
