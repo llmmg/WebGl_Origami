@@ -129,8 +129,8 @@ function initBuffers() {
     // cubeGemo();
 
     //points
-    points = [];
-    pointsIndices = [];
+    // points = [];
+    // pointsIndices = [];
     // points.push(-0.5, 0.5, 0.1);
     // points.push(0.5, 0.5, 0.1);
     // points.push(0.5, -0.5, 0.1);
@@ -155,10 +155,10 @@ function initBuffers() {
 
     //----INIT GRAPH----
 
-    nodeA = new Node(new ADot((-0.5, 0.5, 0.1), false), "A");
-    nodeB = new Node(new ADot((0.5, 0.5, 0.1), false), "B");
-    nodeC = new Node(new ADot((0.5, 0.5, 0.1), false), "C");
-    nodeD = new Node(new ADot((0.5, 0.5, 0.1), false), "D");
+    nodeA = new Node(new ADot([-0.5, 0.5, 0.1], false), "A");
+    nodeB = new Node(new ADot([0.5, 0.5, 0.1], false), "B");
+    nodeC = new Node(new ADot([0.5, -0.5, 0.1], false), "C");
+    nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), "D");
 
     myGraph.addNode(nodeA);
     myGraph.addNode(nodeB);
@@ -172,6 +172,7 @@ function initBuffers() {
 
     console.log("voisins de A");
     console.log(myGraph.getNodeByName("A").getNeig());
+
 
     vertexBuffer = getVertexBufferWithVertices(vertices);
     colorBuffer = getVertexBufferWithVertices(colors);
@@ -188,6 +189,10 @@ function initBuffers() {
     lineIndexBuff = getIndexBufferWithIndices(lineIndices);
 }
 function bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices) {
+
+    vertexBuffer = getVertexBufferWithVertices(vertices);
+    colorBuffer = getVertexBufferWithVertices(colors);
+    indexBuffer = getIndexBufferWithIndices(indices);
 
     //points
     pointsIndexBuffer = getIndexBufferWithIndices(pointsIndices);
@@ -520,14 +525,27 @@ function addPointOnGLScene(pX, pY) {
         // }
         myGraph.showNodes();
         test = myGraph.getNodes();
-        for (i = 0; i < test.length; i++) {
-            derpColors2 = [0.0, 0.0, 1.0, 1.0];
-            pushPtsGlobal(test[i].dot.getPos(), derpColors2);
+        // console.log("AAAAAAAAAAAA");
+        // console.log(test);
+        for (var key in test) {
+            // console.log(test[key]);
+            derpColors2 = [0.0, 0.0, 0.0, 1.0];
+            pushPtsGlobalSimple(test[key].dot.getPos(), derpColors2);
         }
     }
 
     //update buffers
     bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices);
+}
+//add one pts in global point list
+function pushPtsGlobalSimple(pts,color)
+{
+    for (i = 0; i < pts.length; i++) {
+        points.push(pts[i], pts[i+1], pts[i+2]);
+        for (j = 0; j < color.length; j++)
+            colors2.push(color[j]);
+        pointsIndices.push(pointsIndices.length);
+    }
 }
 //add pts in global point list
 function pushPtsGlobal(pts, col) {

@@ -15,11 +15,7 @@ class Graph {
 
     showNodes() {
         console.log("Graph nodes:");
-
-        // for(let i=0;i<this.nodes.length;i++)
-        // {
-        //     console.log(this.nodes);
-        // }
+        
         for (var key in this.nodes) {
             console.log(key)
         }
@@ -36,5 +32,9 @@ class Graph {
 
     getNodeByName(name) {
         return this.nodes[name];
+    }
+    orderedGraph()
+    {
+
     }
 }

@@ -10,6 +10,7 @@ class ADot{
      */
     constructor(position,flag)
     {
+        this.position=[];
         this.position=position;
         this.flag=flag;
     }
