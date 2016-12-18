@@ -15,7 +15,7 @@ class Graph {
 
     showNodes() {
         console.log("Graph nodes:");
-        
+
         for (var key in this.nodes) {
             console.log(key)
         }
@@ -33,8 +33,17 @@ class Graph {
     getNodeByName(name) {
         return this.nodes[name];
     }
-    orderedGraph()
-    {
 
-    }
+    // orderedGraph() {
+    //
+    //     queue=[];
+    //
+    //
+    //     for (var key in this.nodes) {
+    //         //neighbours of current node
+    //         tmpNeig=this.nodes[key].getNeig();
+    //
+    //     }
+    //
+    // }
 }
