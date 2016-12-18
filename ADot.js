@@ -14,10 +14,12 @@ class ADot{
         this.flag=flag;
     }
 
+    //return [x,y,z]
     getPos()
     {
         return this.position;
     }
+    //newPos=[x,y,z]
     setPos(newPos)
     {
         this.position=newPos;

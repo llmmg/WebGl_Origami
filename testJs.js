@@ -42,6 +42,8 @@ var lineIndexBuff = null;
 var colorLine = [];
 var lineIndices = [];
 
+//Graph
+var myGraph = new Graph();
 
 function rotateOnYEverySecond(_rotationAroundY) {
     rotationAroundY == _rotationAroundY;
@@ -129,29 +131,47 @@ function initBuffers() {
     //points
     points = [];
     pointsIndices = [];
-    points.push(-0.5, 0.5, 0.1);
-    points.push(0.5, 0.5, 0.1);
-    points.push(0.5, -0.5, 0.1);
-    points.push(-0.5, -0.5, 0.1);
+    // points.push(-0.5, 0.5, 0.1);
+    // points.push(0.5, 0.5, 0.1);
+    // points.push(0.5, -0.5, 0.1);
+    // points.push(-0.5, -0.5, 0.1);
+    //
+    //
+    // //div by 3 because 1pts= 3coords
+    // for (i = 0; i < points.length / 3; i++) {
+    //     colors2.push(1.0, 0.0, 0.0, 1.0);
+    //     pointsIndices.push(pointsIndices.length);
+    //
+    //     //border color
+    //     colors.push(0.0, 0.0, 0.0, 1.0);
+    //     indices.push(i);
+    // }
+    // indices.push(0);
+    //
+    // //draw rectangle
+    // for (i = 0; i < points.length; i++) {
+    //     vertices.push(points[i]);
+    // }
 
+    //----INIT GRAPH----
 
-    //div by 3 because 1pts= 3coords
-    for (i = 0; i < points.length / 3; i++) {
-        colors2.push(1.0, 0.0, 0.0, 1.0);
-        pointsIndices.push(pointsIndices.length);
+    nodeA = new Node(new ADot((-0.5, 0.5, 0.1), false), "A");
+    nodeB = new Node(new ADot((0.5, 0.5, 0.1), false), "B");
+    nodeC = new Node(new ADot((0.5, 0.5, 0.1), false), "C");
+    nodeD = new Node(new ADot((0.5, 0.5, 0.1), false), "D");
 
-        //border color
-        colors.push(0.0, 0.0, 0.0, 1.0);
-        indices.push(i);
-    }
-    indices.push(0);
+    myGraph.addNode(nodeA);
+    myGraph.addNode(nodeB);
+    myGraph.addNode(nodeC);
+    myGraph.addNode(nodeD);
 
-    //draw rectangle
-    for (i = 0; i < points.length; i++) {
-        vertices.push(points[i]);
+    myGraph.addRelation(nodeA,nodeB);
+    myGraph.addRelation(nodeB,nodeC);
+    myGraph.addRelation(nodeC,nodeD);
+    myGraph.addRelation(nodeD,nodeA);
 
-    }
-
+    console.log("voisins de A");
+    console.log(myGraph.getNodeByName("A").getNeig());
 
     vertexBuffer = getVertexBufferWithVertices(vertices);
     colorBuffer = getVertexBufferWithVertices(colors);
@@ -169,12 +189,12 @@ function initBuffers() {
 }
 function bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices) {
 
-    //test points
+    //points
     pointsIndexBuffer = getIndexBufferWithIndices(pointsIndices);
     pointsBuffer = getVertexBufferWithVertices(points);
     ptsColorsBuffer = getVertexBufferWithVertices(colors2);
 
-    //test lines
+    //fold line
     lineVertexBuffer = getVertexBufferWithVertices(addedPts);
     lineColorBuff = getVertexBufferWithVertices(colorLine);
     lineIndexBuff = getIndexBufferWithIndices(lineIndices);
@@ -256,8 +276,7 @@ function separatePoints(intersecPts, layerPts) {
         // }
 
         //Everithing that is right and/or up of the line must go on the same list
-        if((tmp[j][0]>intersecPts[0][0] || tmp[j][0]>intersecPts[1][0]) && (tmp[j][1]>intersecPts[0][1] || tmp[j][1]>intersecPts[1][1]))
-        {
+        if ((tmp[j][0] > intersecPts[0][0] || tmp[j][0] > intersecPts[1][0]) && (tmp[j][1] > intersecPts[0][1] || tmp[j][1] > intersecPts[1][1])) {
             listA.push(tmp[j]);
         }
         else {
@@ -289,7 +308,7 @@ function findNewPoints(curLayer) {
 
     //get all points
     for (i = 0; i < points.length; i += 3) {
-        tmp.push([points[i], points[i + 1],points[i+2]]);
+        tmp.push([points[i], points[i + 1], points[i + 2]]);
     }
 
     //test
@@ -461,7 +480,6 @@ function drawScene() {
 }
 function addPointOnGLScene(pX, pY) {
 
-
     if (addedPts.length >= 6) {
         addedPts = [];
         lineIndices = [];
@@ -474,24 +492,38 @@ function addPointOnGLScene(pX, pY) {
 
     //add new points only if a line is drawn
     if (addedPts.length >= 5) {
-        tmp = findNewPoints(points);
-        // test pts from each sides
-        sepPts = separatePoints(tmp, points);
+        // tmp = findNewPoints(points);
+        // // test pts from each sides
+        // sepPts = separatePoints(tmp, points);
+        //
+        // somePts = axialSymmetry(sepPts[1], tmp);
+        //
+        // //add pts in global point list
+        // for (i = 0; i < tmp.length; i++) {
+        //     points.push(tmp[i][0], tmp[i][1], 0.1);
+        //     colors2.push(1.0, 0.0, 0.0, 1.0);
+        //     pointsIndices.push(pointsIndices.length);
+        // }
+        // derpColors = [1.0, 0.4, 0.3, 1.0];
+        // pushPtsGlobal(somePts, derpColors);
+        // derpColors2 = [0.0, 0.0, 1.0, 1.0];
+        // pushPtsGlobal(sepPts[0], derpColors2);
+        // derpColors2 = [1.0, 0.0, 1.0, 1.0];
+        // pushPtsGlobal(sepPts[1], derpColors2);
 
-        somePts = axialSymmetry(sepPts[1], tmp);
-
-        //add pts in global point list
-        for (i = 0; i < tmp.length; i++) {
-            points.push(tmp[i][0], tmp[i][1], 0.1);
-            colors2.push(1.0, 0.0, 0.0, 1.0);
-            pointsIndices.push(pointsIndices.length);
+        //----TEST WITH GRAPH STRUCT----
+        //TODO: draw the graph
+        // myGraph= new Graph();
+        // for(var i=0;i<points.length;i+=3)
+        // {
+        //     myGraph.addNode(new ADot([points[i],points[i+1],points[i+2]],false))
+        // }
+        myGraph.showNodes();
+        test = myGraph.getNodes();
+        for (i = 0; i < test.length; i++) {
+            derpColors2 = [0.0, 0.0, 1.0, 1.0];
+            pushPtsGlobal(test[i].dot.getPos(), derpColors2);
         }
-        derpColors = [1.0, 0.4, 0.3, 1.0];
-        pushPtsGlobal(somePts, derpColors);
-        derpColors2 = [0.0, 0.0, 1.0, 1.0];
-        pushPtsGlobal(sepPts[0], derpColors2);
-        derpColors2 = [1.0, 0.0, 1.0, 1.0];
-        pushPtsGlobal(sepPts[1], derpColors2);
     }
 
     //update buffers
