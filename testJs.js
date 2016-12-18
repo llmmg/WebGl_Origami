@@ -276,7 +276,7 @@ function separatePoints(intersecPts, layerPts) {
 
 //TODO: add parameter listPoints (this will be usefull to find intersections on each fold stack...)
 //return intersections points as an array of vectors ([[x,y]])
-function findNewPoints() {
+function findNewPoints(curLayer) {
 
     //fold line points
     x1 = addedPts[0];
@@ -289,8 +289,14 @@ function findNewPoints() {
 
     //get all points
     for (i = 0; i < points.length; i += 3) {
-        tmp.push([points[i], points[i + 1]]);
+        tmp.push([points[i], points[i + 1],points[i+2]]);
     }
+
+    //test
+    // for(i=0;i<curLayer.length;i+=3)
+    // {
+    //
+    // }
 
     //---fold line equation---
     //y=bx+d
@@ -307,7 +313,9 @@ function findNewPoints() {
         tmpInter = intersection([tmp[i], tmp[(i + 1) % tmp.length]], foldL);
         if (validIntersec(tmpInter, tmp)) {
             inter.push(tmpInter);
-            //insert ADot between tmp[i] and tmp[i+1]
+            //todo: insert ADot between tmp[i] and tmp[i+1]
+            // var anchor= new ADot([tmpInter,0],true);
+            //insert it
         }
 
     }
@@ -466,7 +474,7 @@ function addPointOnGLScene(pX, pY) {
 
     //add new points only if a line is drawn
     if (addedPts.length >= 5) {
-        tmp = findNewPoints();
+        tmp = findNewPoints(points);
         // test pts from each sides
         sepPts = separatePoints(tmp, points);
 
@@ -478,7 +486,7 @@ function addPointOnGLScene(pX, pY) {
             colors2.push(1.0, 0.0, 0.0, 1.0);
             pointsIndices.push(pointsIndices.length);
         }
-        derpColors = [0.0, 1.0, 0.0, 1.0];
+        derpColors = [1.0, 0.4, 0.3, 1.0];
         pushPtsGlobal(somePts, derpColors);
         derpColors2 = [0.0, 0.0, 1.0, 1.0];
         pushPtsGlobal(sepPts[0], derpColors2);
