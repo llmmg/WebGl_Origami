@@ -155,23 +155,78 @@ function initBuffers() {
 
     //----INIT GRAPH----
 
-    nodeA = new Node(new ADot([-0.5, 0.5, 0.1], false), "A");
-    nodeB = new Node(new ADot([0.5, 0.5, 0.1], false), "B");
-    nodeC = new Node(new ADot([0.5, -0.5, 0.1], false), "C");
-    nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), "D");
+    nodeA = new Node(new ADot([-0.5, 0.5, 0.1], false), 'A');
+    nodeB = new Node(new ADot([0.5, 0.5, 0.1], false), 'B');
+    nodeC = new Node(new ADot([0.5, -0.5, 0.1], false), 'C');
+    nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), 'D');
+    nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
 
     myGraph.addNode(nodeA);
     myGraph.addNode(nodeB);
     myGraph.addNode(nodeC);
     myGraph.addNode(nodeD);
+    myGraph.addNode(nodeE);
 
-    myGraph.addRelation(nodeA,nodeB);
-    myGraph.addRelation(nodeB,nodeC);
-    myGraph.addRelation(nodeC,nodeD);
-    myGraph.addRelation(nodeD,nodeA);
+    myGraph.addRelation(nodeA, nodeB);
+    myGraph.addRelation(nodeB, nodeC);
+    myGraph.addRelation(nodeC, nodeD);
+    myGraph.addRelation(nodeD, nodeA);
+
+    myGraph.addRelation(nodeB, nodeE);
+    myGraph.addRelation(nodeE, nodeC);
+
 
     console.log("voisins de A");
     console.log(myGraph.getNodeByName("A").getNeig());
+
+    mynodes = myGraph.getNodes();
+    tmpColor = [0.0, 0.0, 0.0, 1.0];
+
+    //add graph pts on points list(to draw)
+    for (var key in mynodes) {
+        pushPtsGlobalSimple(mynodes[key].dot.getPos(), tmpColor);
+    }
+
+
+    //-------draw a line teststst----
+    // vertices.push(0.0,0.0,0.1);
+    // colors.push(0.0,0.0,0.0,1.0);
+    // indices.push(0);
+    //
+    // vertices.push(1.0,0.0,0.1);
+    // colors.push(0.0,0.0,0.0,1.0);
+    // indices.push(1);
+
+    // console.log(vertices[2]);
+
+    //Draw lines
+    // div by 3 because 1pts= 3coords
+    // for (i = 0; i < points.length / 3; i++) {
+    //     // colors2.push(1.0, 0.0, 0.0, 1.0);
+    //     // pointsIndices.push(pointsIndices.length);
+    //
+    //     //border color
+    //     colors.push(0.0, 1.0, 0.0, 1.0);
+    //     indices.push(i);
+    // }
+    // indices.push(0);
+    //
+    // //draw rectangle
+    // for (i = 0; i < points.length; i++) {
+    //     vertices.push(points[i]);
+    // }
+
+    values = myGraph.segments();
+    console.log(values[0]);
+    // console.log(values[1]);
+    // console.log(values[2]);
+
+    vertices = values[0];
+    indices = values[1];
+    colors = values[2];
+    // vertices.push(values[0]);
+    // indices.push(values[1]);
+    // colors.push(values[2]);
 
 
     vertexBuffer = getVertexBufferWithVertices(vertices);
@@ -523,29 +578,22 @@ function addPointOnGLScene(pX, pY) {
         // {
         //     myGraph.addNode(new ADot([points[i],points[i+1],points[i+2]],false))
         // }
-        myGraph.showNodes();
-        test = myGraph.getNodes();
-        // console.log("AAAAAAAAAAAA");
-        // console.log(test);
-        for (var key in test) {
-            // console.log(test[key]);
-            derpColors2 = [0.0, 0.0, 0.0, 1.0];
-            pushPtsGlobalSimple(test[key].dot.getPos(), derpColors2);
-        }
+        // myGraph.showNodes();
+        // test = myGraph.getNodes();
+
     }
 
     //update buffers
     bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices);
 }
 //add one pts in global point list
-function pushPtsGlobalSimple(pts,color)
-{
-    for (i = 0; i < pts.length; i++) {
-        points.push(pts[i], pts[i+1], pts[i+2]);
-        for (j = 0; j < color.length; j++)
-            colors2.push(color[j]);
-        pointsIndices.push(pointsIndices.length);
-    }
+function pushPtsGlobalSimple(pts, color) {
+    // for (i = 0; i < pts.length; i++) {
+    points.push(pts[0], pts[1], pts[2]);
+    for (j = 0; j < color.length; j++)
+        colors2.push(color[j]);
+    pointsIndices.push(pointsIndices.length);
+    // }
 }
 //add pts in global point list
 function pushPtsGlobal(pts, col) {
@@ -593,7 +641,7 @@ function drawLines() {
     glContext.bindBuffer(glContext.ARRAY_BUFFER, colorBuffer);
     glContext.vertexAttribPointer(prg.colorAttribute, 4, glContext.FLOAT, false, 0, 0);
     glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glContext.drawElements(glContext.LINE_STRIP, indices.length, glContext.UNSIGNED_SHORT, 0);
+    glContext.drawElements(glContext.LINES, indices.length, glContext.UNSIGNED_SHORT, 0);
 }
 function changeProjection() {
     //setting the projection in perspective
