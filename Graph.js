@@ -34,19 +34,6 @@ class Graph {
         return this.nodes[name];
     }
 
-    // orderedGraph() {
-    //
-    //     queue=[];
-    //
-    //
-    //     for (var key in this.nodes) {
-    //         //neighbours of current node
-    //         tmpNeig=this.nodes[key].getNeig();
-    //
-    //     }
-    //
-    // }
-
     //used to draw edges lines
     //return [vertices,indices,colors]
     segments() {
@@ -56,20 +43,18 @@ class Graph {
 
         var visitedNodes = [];
 
+        //each node in graph
         for (var node in this.nodes) {
+
             var curNode = this.nodes[node];
-
             visitedNodes.push(curNode.name);
-
-
             var curNeig = curNode.getNeig();
-            for (var i = 0; i < curNeig.length; i++) {
-                // console.log(curNeig[i].name);
-                // console.log(curNeig[i].dot.getPos())
 
+            //each neighbours of current node
+            for (var i = 0; i < curNeig.length; i++) {
 
                 //--push next (neighbour) if not visited
-                if (visitedNodes.includes(curNeig[i].name)==false) {
+                if (visitedNodes.includes(curNeig[i].name) == false) {
                     //--push current pts
                     var pos = curNode.dot.getPos();
                     vertices.push(pos[0], pos[1], pos[2]);
@@ -82,17 +67,11 @@ class Graph {
                     colors.push(0.0, 0.0, 0.0, 1.0);
                     indices.push(indices.length);
 
-                    console.log("NEXT POINT");
+                    // console.log("NEXT POINT");
                     console.log(curNode.name + curNeig[i].name);
-
                 }
-                // console.log(curNode.name + curNeig[i].name);
-
             }
-            // console.log("current: "+curNode.name);
-            // console.log("1st neigbhour: "+curNeig[0].name);
         }
-        indices.push(0);
         return [vertices, indices, colors];
     }
 }

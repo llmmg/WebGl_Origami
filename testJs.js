@@ -187,47 +187,12 @@ function initBuffers() {
         pushPtsGlobalSimple(mynodes[key].dot.getPos(), tmpColor);
     }
 
-
-    //-------draw a line teststst----
-    // vertices.push(0.0,0.0,0.1);
-    // colors.push(0.0,0.0,0.0,1.0);
-    // indices.push(0);
-    //
-    // vertices.push(1.0,0.0,0.1);
-    // colors.push(0.0,0.0,0.0,1.0);
-    // indices.push(1);
-
-    // console.log(vertices[2]);
-
-    //Draw lines
-    // div by 3 because 1pts= 3coords
-    // for (i = 0; i < points.length / 3; i++) {
-    //     // colors2.push(1.0, 0.0, 0.0, 1.0);
-    //     // pointsIndices.push(pointsIndices.length);
-    //
-    //     //border color
-    //     colors.push(0.0, 1.0, 0.0, 1.0);
-    //     indices.push(i);
-    // }
-    // indices.push(0);
-    //
-    // //draw rectangle
-    // for (i = 0; i < points.length; i++) {
-    //     vertices.push(points[i]);
-    // }
-
     values = myGraph.segments();
     console.log(values[0]);
-    // console.log(values[1]);
-    // console.log(values[2]);
 
     vertices = values[0];
     indices = values[1];
     colors = values[2];
-    // vertices.push(values[0]);
-    // indices.push(values[1]);
-    // colors.push(values[2]);
-
 
     vertexBuffer = getVertexBufferWithVertices(vertices);
     colorBuffer = getVertexBufferWithVertices(colors);
@@ -570,16 +535,6 @@ function addPointOnGLScene(pX, pY) {
         // pushPtsGlobal(sepPts[0], derpColors2);
         // derpColors2 = [1.0, 0.0, 1.0, 1.0];
         // pushPtsGlobal(sepPts[1], derpColors2);
-
-        //----TEST WITH GRAPH STRUCT----
-        //TODO: draw the graph
-        // myGraph= new Graph();
-        // for(var i=0;i<points.length;i+=3)
-        // {
-        //     myGraph.addNode(new ADot([points[i],points[i+1],points[i+2]],false))
-        // }
-        // myGraph.showNodes();
-        // test = myGraph.getNodes();
 
     }
 
