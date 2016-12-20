@@ -44,6 +44,7 @@ var lineIndices = [];
 
 //Graph
 var myGraph = new Graph();
+var edges = [];
 
 function rotateOnYEverySecond(_rotationAroundY) {
     rotationAroundY == _rotationAroundY;
@@ -187,42 +188,50 @@ function initBuffers() {
         pushPtsGlobalSimple(mynodes[key].dot.getPos(), tmpColor);
     }
 
-    values = myGraph.segments();
-    console.log(values[0]);
+    //get stuff for lines (segments)
+    edges = myGraph.segments();
+    // console.log(values[0]);
 
-    vertices = values[0];
-    indices = values[1];
-    colors = values[2];
+    vertices = edges[0];
+    indices = edges[1];
+    colors = edges[2];
 
-    vertexBuffer = getVertexBufferWithVertices(vertices);
-    colorBuffer = getVertexBufferWithVertices(colors);
-    indexBuffer = getIndexBufferWithIndices(indices);
+    // vertices.push(values[0]);
+    // indices.push(values[1]);
+    // colors.push(values[2]);
 
-    //test points
-    pointsIndexBuffer = getIndexBufferWithIndices(pointsIndices);
-    pointsBuffer = getVertexBufferWithVertices(points);
-    ptsColorsBuffer = getVertexBufferWithVertices(colors2);
-
-    //test lines
-    lineVertexBuffer = getVertexBufferWithVertices(addedPts);
-    lineColorBuff = getVertexBufferWithVertices(colorLine);
-    lineIndexBuff = getIndexBufferWithIndices(lineIndices);
+    bind([pointsIndices,points,colors2],[addedPts,colorLine,lineIndices],edges);
+    // vertexBuffer = getVertexBufferWithVertices(vertices);
+    // colorBuffer = getVertexBufferWithVertices(colors);
+    // indexBuffer = getIndexBufferWithIndices(indices);
+    //
+    // //test points
+    // pointsIndexBuffer = getIndexBufferWithIndices(pointsIndices);
+    // pointsBuffer = getVertexBufferWithVertices(points);
+    // ptsColorsBuffer = getVertexBufferWithVertices(colors2);
+    //
+    // //test lines
+    // lineVertexBuffer = getVertexBufferWithVertices(addedPts);
+    // lineColorBuff = getVertexBufferWithVertices(colorLine);
+    // lineIndexBuff = getIndexBufferWithIndices(lineIndices);
 }
-function bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices) {
+function bind(pointStuff, foldLine, segments) {
+    // pointsIndices, points, colors2, addedPts, colorLine, lineIndices
 
-    vertexBuffer = getVertexBufferWithVertices(vertices);
-    colorBuffer = getVertexBufferWithVertices(colors);
-    indexBuffer = getIndexBufferWithIndices(indices);
+    //segments
+    vertexBuffer = getVertexBufferWithVertices(segments[0]);
+    colorBuffer = getVertexBufferWithVertices(segments[2]);
+    indexBuffer = getIndexBufferWithIndices(segments[1]);
 
     //points
-    pointsIndexBuffer = getIndexBufferWithIndices(pointsIndices);
-    pointsBuffer = getVertexBufferWithVertices(points);
-    ptsColorsBuffer = getVertexBufferWithVertices(colors2);
+    pointsIndexBuffer = getIndexBufferWithIndices(pointStuff[0]);
+    pointsBuffer = getVertexBufferWithVertices(pointStuff[1]);
+    ptsColorsBuffer = getVertexBufferWithVertices(pointStuff[2]);
 
     //fold line
-    lineVertexBuffer = getVertexBufferWithVertices(addedPts);
-    lineColorBuff = getVertexBufferWithVertices(colorLine);
-    lineIndexBuff = getIndexBufferWithIndices(lineIndices);
+    lineVertexBuffer = getVertexBufferWithVertices(foldLine[0]);
+    lineColorBuff = getVertexBufferWithVertices(foldLine[1]);
+    lineIndexBuff = getIndexBufferWithIndices(foldLine[2]);
 }
 //do axial simetry of ptsToInverse by intersectPts line
 function axialSymmetry(ptsToInverse, intersectPts) {
@@ -320,7 +329,7 @@ function separatePoints(intersecPts, layerPts) {
 
 //TODO: add parameter listPoints (this will be usefull to find intersections on each fold stack...)
 //return intersections points as an array of vectors ([[x,y]])
-function findNewPoints(curLayer) {
+function findNewPoints(graphPoints) {
 
     //fold line points
     x1 = addedPts[0];
@@ -332,15 +341,16 @@ function findNewPoints(curLayer) {
     var tmp = []; //[n][x, y or z]
 
     //get all points
-    for (i = 0; i < points.length; i += 3) {
-        tmp.push([points[i], points[i + 1], points[i + 2]]);
-    }
-
-    //test
-    // for(i=0;i<curLayer.length;i+=3)
-    // {
-    //
+    // for (i = 0; i < points.length; i += 3) {
+    //     tmp.push([points[i], points[i + 1], points[i + 2]]);
     // }
+
+    //test implementation with graphs
+    for (i = 0; i < graphPoints.length; i += 3) {
+        tmp.push([graphPoints[i], graphPoints[i + 1], graphPoints[i + 2]]);
+    }
+    // console.log(tmp);
+
 
     //---fold line equation---
     //y=bx+d
@@ -352,7 +362,7 @@ function findNewPoints(curLayer) {
     inter = []; //x,y
 
     //find all intersections
-    for (let i = 0; i < tmp.length; i++) {
+    for (let i = 0; i < tmp.length; i += 2) {
         foldL = [[x1, y1], [x2, y2]];
         tmpInter = intersection([tmp[i], tmp[(i + 1) % tmp.length]], foldL);
         if (validIntersec(tmpInter, tmp)) {
@@ -518,7 +528,8 @@ function addPointOnGLScene(pX, pY) {
     //add new points only if a line is drawn
     if (addedPts.length >= 5) {
         // tmp = findNewPoints(points);
-        // // test pts from each sides
+        // // // test pts from each sides+
+        //
         // sepPts = separatePoints(tmp, points);
         //
         // somePts = axialSymmetry(sepPts[1], tmp);
@@ -536,10 +547,32 @@ function addPointOnGLScene(pX, pY) {
         // derpColors2 = [1.0, 0.0, 1.0, 1.0];
         // pushPtsGlobal(sepPts[1], derpColors2);
 
+        //---TESTSTESETSETSET-----
+        newsPts = myGraph.addIntersections(addedPts);
+        edges = myGraph.segments();
+        // myGraph.showNodes();
+        // console.log(myGraph.getNodeByName('A'));
+        // console.log(myGraph.getNodeByName('AD'));
+        //for bind
+        vertices=edges[0];
+        indices = edges[1];
+        colors = edges[2];
+        // vertices.push(edges[0]);
+        // indices.push(edges[1]);
+        // colors.push(edges[2]);
+
+
+        tstColor = [0.0, 0.0, 0.0, 1.0];
+        pushPtsGlobal(newsPts, tstColor);
+
     }
 
+    // edges = myGraph.segments();
+
+    var point = [pointsIndices, points, colors2];
+    var fline = [addedPts, colorLine, lineIndices];
     //update buffers
-    bind(pointsIndices, points, colors2, addedPts, colorLine, lineIndices);
+    bind(point, fline, [vertices,indices,colors]);
 }
 //add one pts in global point list
 function pushPtsGlobalSimple(pts, color) {

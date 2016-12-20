@@ -25,7 +25,10 @@ class Graph {
         this.nodes[node1.name].addNeig(node2);
         this.nodes[node2.name].addNeig(node1);
     }
-
+    delRelation(node1,node2){
+        this.nodes[node1.name].removeNeig(node2);
+        this.nodes[node2.name].removeNeig(node1);
+    }
     getNodes() {
         return this.nodes;
     }
@@ -68,10 +71,93 @@ class Graph {
                     indices.push(indices.length);
 
                     // console.log("NEXT POINT");
-                    console.log(curNode.name + curNeig[i].name);
+                    // console.log(curNode.name + curNeig[i].name);
                 }
             }
         }
         return [vertices, indices, colors];
+    }
+
+    addIntersections(foldPoints) {
+        //fold line points
+        var x1 = foldPoints[0];
+        var y1 = foldPoints[1];
+        var x2 = foldPoints[3];
+        var y2 = foldPoints[4];
+
+        var visitedNodes=[];
+        var newIntesectPts=[];
+        var nodesToInserts=[]; //[A,B,newNode]
+
+        for (var node in this.nodes) {
+
+            var curNode = this.nodes[node];
+            visitedNodes.push(curNode.name);
+            var curNeig = curNode.getNeig();
+
+
+            // console.log("node "+curNode.name+" \nneighbours:\n");
+            // console.log(curNeig.length);
+
+
+            //each neighbours of current node
+            for (var n = 0; n < curNeig.length; n+=1) {
+                console.log("n="+n);
+                console.log(curNode.name+curNeig[n].name);
+
+                if(curNode.name=='A')
+                {
+                    console.log(curNeig);
+                }
+
+                //--push next (neighbour) if not visited
+                if (visitedNodes.includes(curNeig[n].name) == false && curNeig[n].dot.flag==false) {
+                    console.log("IS IN! "+curNode.name+curNeig[n].name);
+                    //--current pts
+                    var pos = curNode.dot.getPos();
+                    //--next pts (neighbour)
+                    var posNext = curNeig[n].dot.getPos();
+
+                    var foldL = [[x1, y1], [x2, y2]];
+                    var intersect = intersection([pos, posNext], foldL);
+                    if (validIntersec(intersect, [pos, posNext])) {
+                        //add new node
+                        var interNode = new Node(new ADot([intersect[0],intersect[1],0.1], true), curNode.name + curNeig[n].name);
+
+                        // this.addNode(interNode);
+                        // // console.log(interNode.name);
+                        //
+                        // //add realtions between intersections and pts
+                        // this.addRelation(curNode, interNode);
+                        // this.addRelation(interNode, curNeig[n]);
+                        //
+                        // //remove relation between curNode and curNeig[i]
+                        // this.delRelation(curNode,curNeig[n]);
+
+                        //add to return
+                        newIntesectPts.push(interNode.dot.getPos());
+
+                        nodesToInserts.push([curNode,curNeig[n],interNode]);
+                    }
+                }
+            }
+        }
+        for(let i=0;i<nodesToInserts.length;i++)
+        {
+            this.insertNode(nodesToInserts[i][0],nodesToInserts[i][1],nodesToInserts[i][2]);
+        }
+        return newIntesectPts;
+    }
+
+    insertNode(nodeA,nodeB,nodeToInsert)
+    {
+        this.addNode(nodeToInsert);
+
+        //add realtions between intersections and pts
+        this.addRelation(nodeA,nodeToInsert);
+        this.addRelation(nodeToInsert, nodeB);
+
+        //remove relation between curNode and curNeig[i]
+        this.delRelation(nodeA,nodeB);
     }
 }

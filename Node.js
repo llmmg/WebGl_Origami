@@ -22,6 +22,15 @@ class Node{
     {
         this.neighbours.push(neigNode);
     }
+    removeNeig(neigNode)
+    {
+        for(let r=0;r<this.neighbours.length;r++){
+            if(this.neighbours[r].name==neigNode.name)
+            {
+                this.neighbours.splice(r,1);
+            }
+        }
+    }
 
     getNeig()
     {
