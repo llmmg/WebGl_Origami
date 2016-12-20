@@ -102,17 +102,9 @@ class Graph {
 
             //each neighbours of current node
             for (var n = 0; n < curNeig.length; n+=1) {
-                console.log("n="+n);
-                console.log(curNode.name+curNeig[n].name);
-
-                if(curNode.name=='A')
-                {
-                    console.log(curNeig);
-                }
 
                 //--push next (neighbour) if not visited
-                if (visitedNodes.includes(curNeig[n].name) == false && curNeig[n].dot.flag==false) {
-                    console.log("IS IN! "+curNode.name+curNeig[n].name);
+                if (visitedNodes.includes(curNeig[n].name) == false) {
                     //--current pts
                     var pos = curNode.dot.getPos();
                     //--next pts (neighbour)
@@ -122,17 +114,7 @@ class Graph {
                     var intersect = intersection([pos, posNext], foldL);
                     if (validIntersec(intersect, [pos, posNext])) {
                         //add new node
-                        var interNode = new Node(new ADot([intersect[0],intersect[1],0.1], true), curNode.name + curNeig[n].name);
-
-                        // this.addNode(interNode);
-                        // // console.log(interNode.name);
-                        //
-                        // //add realtions between intersections and pts
-                        // this.addRelation(curNode, interNode);
-                        // this.addRelation(interNode, curNeig[n]);
-                        //
-                        // //remove relation between curNode and curNeig[i]
-                        // this.delRelation(curNode,curNeig[n]);
+                        var interNode = new Node(new ADot([intersect[0],intersect[1],0.1], false), curNode.name + curNeig[n].name);
 
                         //add to return
                         newIntesectPts.push(interNode.dot.getPos());
@@ -145,6 +127,12 @@ class Graph {
         for(let i=0;i<nodesToInserts.length;i++)
         {
             this.insertNode(nodesToInserts[i][0],nodesToInserts[i][1],nodesToInserts[i][2]);
+        }
+        for(let i=0;i<nodesToInserts.length;i++)
+        {
+            if(i+1<nodesToInserts.length){
+                this.addRelation(nodesToInserts[i][2],nodesToInserts[i+1][2]);
+            }
         }
         return newIntesectPts;
     }

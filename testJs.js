@@ -160,21 +160,27 @@ function initBuffers() {
     nodeB = new Node(new ADot([0.5, 0.5, 0.1], false), 'B');
     nodeC = new Node(new ADot([0.5, -0.5, 0.1], false), 'C');
     nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), 'D');
-    nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
+    // nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
+    // nodeF = new Node(new ADot([0.0,0.0,0.1],false),'F');
 
     myGraph.addNode(nodeA);
     myGraph.addNode(nodeB);
     myGraph.addNode(nodeC);
-    myGraph.addNode(nodeD);
-    myGraph.addNode(nodeE);
+    myGraph.addNode(nodeD);;
+    // myGraph.addNode(nodeE);
+    // myGraph.addNode(nodeF);
 
     myGraph.addRelation(nodeA, nodeB);
     myGraph.addRelation(nodeB, nodeC);
     myGraph.addRelation(nodeC, nodeD);
     myGraph.addRelation(nodeD, nodeA);
 
-    myGraph.addRelation(nodeB, nodeE);
-    myGraph.addRelation(nodeE, nodeC);
+    // myGraph.addRelation(nodeB, nodeE);
+    // myGraph.addRelation(nodeE, nodeC);
+    //
+    // myGraph.addRelation(nodeF,nodeA);
+    // myGraph.addRelation(nodeF,nodeC);
+    // myGraph.addRelation(nodeF,nodeD);
 
 
     console.log("voisins de A");
@@ -553,6 +559,7 @@ function addPointOnGLScene(pX, pY) {
         // myGraph.showNodes();
         // console.log(myGraph.getNodeByName('A'));
         // console.log(myGraph.getNodeByName('AD'));
+
         //for bind
         vertices=edges[0];
         indices = edges[1];
@@ -562,8 +569,17 @@ function addPointOnGLScene(pX, pY) {
         // colors.push(edges[2]);
 
 
+
         tstColor = [0.0, 0.0, 0.0, 1.0];
-        pushPtsGlobal(newsPts, tstColor);
+        // pushPtsGlobal(newsPts, tstColor);
+        allNodes= myGraph.getNodes();
+        for(var key in allNodes)
+        {
+            pushPtsGlobalSimple(allNodes[key].dot.getPos(),tstColor);
+        }
+
+        myGraph.showNodes();
+
 
     }
 
