@@ -25,10 +25,12 @@ class Graph {
         this.nodes[node1.name].addNeig(node2);
         this.nodes[node2.name].addNeig(node1);
     }
-    delRelation(node1,node2){
+
+    delRelation(node1, node2) {
         this.nodes[node1.name].removeNeig(node2);
         this.nodes[node2.name].removeNeig(node1);
     }
+
     getNodes() {
         return this.nodes;
     }
@@ -85,9 +87,9 @@ class Graph {
         var x2 = foldPoints[3];
         var y2 = foldPoints[4];
 
-        var visitedNodes=[];
-        var newIntesectPts=[];
-        var nodesToInserts=[]; //[A,B,newNode]
+        var visitedNodes = [];
+        var newIntesectPts = [];
+        var nodesToInserts = []; //[A,B,newNode]
 
         for (var node in this.nodes) {
 
@@ -101,7 +103,7 @@ class Graph {
 
 
             //each neighbours of current node
-            for (var n = 0; n < curNeig.length; n+=1) {
+            for (var n = 0; n < curNeig.length; n += 1) {
 
                 //--push next (neighbour) if not visited
                 if (visitedNodes.includes(curNeig[n].name) == false) {
@@ -114,38 +116,39 @@ class Graph {
                     var intersect = intersection([pos, posNext], foldL);
                     if (validIntersec(intersect, [pos, posNext])) {
                         //add new node
-                        var interNode = new Node(new ADot([intersect[0],intersect[1],0.1], false), curNode.name + curNeig[n].name);
+                        var interNode = new Node(new ADot([intersect[0], intersect[1], 0.1], false), curNode.name + curNeig[n].name);
 
                         //add to return
                         newIntesectPts.push(interNode.dot.getPos());
 
-                        nodesToInserts.push([curNode,curNeig[n],interNode]);
+                        nodesToInserts.push([curNode, curNeig[n], interNode]);
                     }
                 }
             }
         }
-        for(let i=0;i<nodesToInserts.length;i++)
-        {
-            this.insertNode(nodesToInserts[i][0],nodesToInserts[i][1],nodesToInserts[i][2]);
+        //insert new nodes in graph
+        for (let i = 0; i < nodesToInserts.length; i++) {
+            this.insertNode(nodesToInserts[i][0], nodesToInserts[i][1], nodesToInserts[i][2]);
         }
-        for(let i=0;i<nodesToInserts.length;i++)
-        {
-            if(i+1<nodesToInserts.length){
-                this.addRelation(nodesToInserts[i][2],nodesToInserts[i+1][2]);
+
+        //add relations between new nodes (fold line)
+        for (let i = 0; i < nodesToInserts.length; i++) {
+            if (i + 1 < nodesToInserts.length) {
+                this.addRelation(nodesToInserts[i][2], nodesToInserts[i + 1][2]);
             }
         }
         return newIntesectPts;
     }
 
-    insertNode(nodeA,nodeB,nodeToInsert)
-    {
+    //insert a node between a nodeA and a nodeB
+    insertNode(nodeA, nodeB, nodeToInsert) {
         this.addNode(nodeToInsert);
 
         //add realtions between intersections and pts
-        this.addRelation(nodeA,nodeToInsert);
+        this.addRelation(nodeA, nodeToInsert);
         this.addRelation(nodeToInsert, nodeB);
 
         //remove relation between curNode and curNeig[i]
-        this.delRelation(nodeA,nodeB);
+        this.delRelation(nodeA, nodeB);
     }
 }

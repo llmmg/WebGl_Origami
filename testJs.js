@@ -116,43 +116,6 @@ function cubeGemo() {
 }
 function initBuffers() {
 
-    // addedPts=[];
-    // //pts for the fold line
-    // addedPts.push(0.0,1.2,0.1);
-    // addedPts.push(0.0,-1.2,0.1);
-    //
-    // colorLine.push(0.0, 0.0, 1.0, 1.0);
-    // colorLine.push(0.0, 0.0, 1.0, 1.0);
-    //
-    // lineIndices.push(0,1);
-
-
-    // cubeGemo();
-
-    //points
-    // points = [];
-    // pointsIndices = [];
-    // points.push(-0.5, 0.5, 0.1);
-    // points.push(0.5, 0.5, 0.1);
-    // points.push(0.5, -0.5, 0.1);
-    // points.push(-0.5, -0.5, 0.1);
-    //
-    //
-    // //div by 3 because 1pts= 3coords
-    // for (i = 0; i < points.length / 3; i++) {
-    //     colors2.push(1.0, 0.0, 0.0, 1.0);
-    //     pointsIndices.push(pointsIndices.length);
-    //
-    //     //border color
-    //     colors.push(0.0, 0.0, 0.0, 1.0);
-    //     indices.push(i);
-    // }
-    // indices.push(0);
-    //
-    // //draw rectangle
-    // for (i = 0; i < points.length; i++) {
-    //     vertices.push(points[i]);
-    // }
 
     //----INIT GRAPH----
 
