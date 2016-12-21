@@ -21,6 +21,14 @@ class Graph {
         }
     }
 
+    countNodes() {
+        var count = 0;
+        for (var name in this.nodes) {
+            count++;
+        }
+        return count;
+    }
+
     addRelation(node1, node2) {
         this.nodes[node1.name].addNeig(node2);
         this.nodes[node2.name].addNeig(node1);
@@ -103,7 +111,7 @@ class Graph {
 
 
             //each neighbours of current node
-            for (var n = 0; n < curNeig.length; n += 1) {
+            for (var n = 0; n < curNeig.length; n++) {
 
                 //--push next (neighbour) if not visited
                 if (visitedNodes.includes(curNeig[n].name) == false) {
@@ -123,6 +131,14 @@ class Graph {
 
                         nodesToInserts.push([curNode, curNeig[n], interNode]);
                     }
+                    else{
+                        console.log("INVALID INTERSECTION");
+                        console.log(curNode.name+"-"+curNeig[n].name);
+                    }
+                }else
+                {
+                    console.log("ALREDY VISITED");
+                    console.log(curNeig[n].name);
                 }
             }
         }

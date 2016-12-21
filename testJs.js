@@ -122,21 +122,25 @@ function initBuffers() {
     nodeA = new Node(new ADot([-0.5, 0.5, 0.1], false), 'A');
     nodeB = new Node(new ADot([0.5, 0.5, 0.1], false), 'B');
     nodeC = new Node(new ADot([0.5, -0.5, 0.1], false), 'C');
-    nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), 'D');
+    // nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), 'D');
     // nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
     // nodeF = new Node(new ADot([0.0,0.0,0.1],false),'F');
 
     myGraph.addNode(nodeA);
     myGraph.addNode(nodeB);
     myGraph.addNode(nodeC);
-    myGraph.addNode(nodeD);;
+    // myGraph.addNode(nodeD);;
     // myGraph.addNode(nodeE);
     // myGraph.addNode(nodeF);
 
     myGraph.addRelation(nodeA, nodeB);
     myGraph.addRelation(nodeB, nodeC);
-    myGraph.addRelation(nodeC, nodeD);
-    myGraph.addRelation(nodeD, nodeA);
+
+    //temp
+    myGraph.addRelation(nodeA,nodeC);
+
+    // myGraph.addRelation(nodeC, nodeD);
+    // myGraph.addRelation(nodeD, nodeA);
 
     // myGraph.addRelation(nodeB, nodeE);
     // myGraph.addRelation(nodeE, nodeC);
@@ -146,8 +150,8 @@ function initBuffers() {
     // myGraph.addRelation(nodeF,nodeD);
 
 
-    console.log("voisins de A");
-    console.log(myGraph.getNodeByName("A").getNeig());
+    // console.log("voisins de A");
+    // console.log(myGraph.getNodeByName("A").getNeig());
 
     mynodes = myGraph.getNodes();
     tmpColor = [0.0, 0.0, 0.0, 1.0];
@@ -296,7 +300,7 @@ function separatePoints(intersecPts, layerPts) {
     return [listA, listB]
 }
 
-//TODO: add parameter listPoints (this will be usefull to find intersections on each fold stack...)
+//DEPRECATED
 //return intersections points as an array of vectors ([[x,y]])
 function findNewPoints(graphPoints) {
 
@@ -346,31 +350,32 @@ function findNewPoints(graphPoints) {
     return inter;
 
 }
+//DEPRECATED
 //where line=[[x1,y1],[x2,y2]]
-function intersection(line1, foldLine) {
-    //---fold line equation---
-    //y=bx+d
-    b = (foldLine[0][1] - foldLine[1][1]) / (foldLine[0][0] - foldLine[1][0]);
-    //d=y-bx
-    d = foldLine[0][1] - b * foldLine[0][0];
-
-    if ((line1[0][0] - line1[1][0]) == 0) {
-        //when vertical: intersection in x = a pts of the line
-        x = line1[0][0];
-        y = b * x + d;
-    } else {
-        //---border line---
-        //y=ax+c
-        a0 = (line1[0][1] - line1[1][1]) / (line1[0][0] - line1[1][0]);
-        //c0 = y-ax
-        c0 = line1[0][1] - a0 * line1[0][0];
-        //x
-        x = (d - c0) / (a0 - b);
-        //y
-        y = a0 * x + c0;
-    }
-    return [x, y];
-}
+// function intersection(line1, foldLine) {
+//     //---fold line equation---
+//     //y=bx+d
+//     b = (foldLine[0][1] - foldLine[1][1]) / (foldLine[0][0] - foldLine[1][0]);
+//     //d=y-bx
+//     d = foldLine[0][1] - b * foldLine[0][0];
+//
+//     if ((line1[0][0] - line1[1][0]) == 0) {
+//         //when vertical: intersection in x = a pts of the line
+//         x = line1[0][0];
+//         y = b * x + d;
+//     } else {
+//         //---border line---
+//         //y=ax+c
+//         a0 = (line1[0][1] - line1[1][1]) / (line1[0][0] - line1[1][0]);
+//         //c0 = y-ax
+//         c0 = line1[0][1] - a0 * line1[0][0];
+//         //x
+//         x = (d - c0) / (a0 - b);
+//         //y
+//         y = a0 * x + c0;
+//     }
+//     return [x, y];
+// }
 //DEPRECATED REPLACED BY INTERSECTION
 //compute distance between fold points and border points
 //return closest side of a point
@@ -404,38 +409,38 @@ function distance(ptsA, ptsB) {
 
 //intersec is a point ([x,y])
 //check if intersec between one corners pair
-function validIntersec(intersec, corners) {
-
-    for (j = 0; j < corners.length; j++) {
-        ab = []; //[x,y]
-        ab.push(corners[(j + 1) % corners.length][0] - corners[j][0]);
-        ab.push(corners[(j + 1) % corners.length][1] - corners[j][1]);
-
-        ac = [];
-        ac.push(intersec[0] - corners[j][0]);
-        ac.push(intersec[1] - corners[j][1]);
-
-        //x*AB=AC x€[0,1]? if so, intersec is valide
-        //as AB//AC => AC(x)/AB(x) == AC(y)/AB(y)
-        //1st test if parallel => alpha=180°
-        angleRad = Math.acos((ab[0] * ac[0] + ab[1] * ac[1]) / (vectorMagnitude(ab) * vectorMagnitude(ac)));
-        angle = angleRad * 180 / Math.PI;
-        if (angle == 0) {
-            //2nd test if x*AB=AC with x[0,1]
-            var rat = (ab[0] == 0) ? ac[1] / ab[1] : ac[0] / ab[0];
-
-            if (rat >= 0 && rat <= 1) {
-                //valid
-                return true;
-            }
-        }
-    }
-    return false;
-}
+// function validIntersec(intersec, corners) {
+//
+//     for (j = 0; j < corners.length; j++) {
+//         ab = []; //[x,y]
+//         ab.push(corners[(j + 1) % corners.length][0] - corners[j][0]);
+//         ab.push(corners[(j + 1) % corners.length][1] - corners[j][1]);
+//
+//         ac = [];
+//         ac.push(intersec[0] - corners[j][0]);
+//         ac.push(intersec[1] - corners[j][1]);
+//
+//         //x*AB=AC x€[0,1]? if so, intersec is valide
+//         //as AB//AC => AC(x)/AB(x) == AC(y)/AB(y)
+//         //1st test if parallel => alpha=180°
+//         angleRad = Math.acos((ab[0] * ac[0] + ab[1] * ac[1]) / (vectorMagnitude(ab) * vectorMagnitude(ac)));
+//         angle = angleRad * 180 / Math.PI;
+//         if (angle == 0) {
+//             //2nd test if x*AB=AC with x[0,1]
+//             var rat = (ab[0] == 0) ? ac[1] / ab[1] : ac[0] / ab[0];
+//
+//             if (rat >= 0 && rat <= 1) {
+//                 //valid
+//                 return true;
+//             }
+//         }
+//     }
+//     return false;
+// }
 //return ||vector||
-function vectorMagnitude(vector) {
-    return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
-}
+// function vectorMagnitude(vector) {
+//     return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+// }
 function drawScene() {
 
     glContext.clearColor(0.9, 0.9, 0.9, 1.0);
@@ -520,6 +525,7 @@ function addPointOnGLScene(pX, pY) {
         newsPts = myGraph.addIntersections(addedPts);
         edges = myGraph.segments();
         // myGraph.showNodes();
+
         // console.log(myGraph.getNodeByName('A'));
         // console.log(myGraph.getNodeByName('AD'));
 
@@ -540,7 +546,8 @@ function addPointOnGLScene(pX, pY) {
         {
             pushPtsGlobalSimple(allNodes[key].dot.getPos(),tstColor);
         }
-
+        console.log("Numbers of nodes:");
+        console.log(myGraph.countNodes());
         myGraph.showNodes();
 
 
