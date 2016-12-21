@@ -132,13 +132,13 @@ class Graph {
                         nodesToInserts.push([curNode, curNeig[n], interNode]);
                     }
                     else{
-                        console.log("INVALID INTERSECTION");
-                        console.log(curNode.name+"-"+curNeig[n].name);
+                        // console.log("INVALID INTERSECTION");
+                        // console.log(curNode.name+"-"+curNeig[n].name);
                     }
                 }else
                 {
-                    console.log("ALREDY VISITED");
-                    console.log(curNeig[n].name);
+                    // console.log("ALREDY VISITED");
+                    // console.log(curNeig[n].name);
                 }
             }
         }

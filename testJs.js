@@ -122,32 +122,31 @@ function initBuffers() {
     nodeA = new Node(new ADot([-0.5, 0.5, 0.1], false), 'A');
     nodeB = new Node(new ADot([0.5, 0.5, 0.1], false), 'B');
     nodeC = new Node(new ADot([0.5, -0.5, 0.1], false), 'C');
-    // nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), 'D');
-    // nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
-    // nodeF = new Node(new ADot([0.0,0.0,0.1],false),'F');
+    nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), 'D');
+    nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
+    nodeF = new Node(new ADot([0.0, 0.0, 0.1], false), 'F');
 
     myGraph.addNode(nodeA);
     myGraph.addNode(nodeB);
     myGraph.addNode(nodeC);
-    // myGraph.addNode(nodeD);;
-    // myGraph.addNode(nodeE);
-    // myGraph.addNode(nodeF);
+    myGraph.addNode(nodeD);
+    ;
+    myGraph.addNode(nodeE);
+    myGraph.addNode(nodeF);
 
     myGraph.addRelation(nodeA, nodeB);
     myGraph.addRelation(nodeB, nodeC);
 
-    //temp
-    myGraph.addRelation(nodeA,nodeC);
+    myGraph.addRelation(nodeC, nodeD);
+    myGraph.addRelation(nodeD, nodeA);
 
-    // myGraph.addRelation(nodeC, nodeD);
-    // myGraph.addRelation(nodeD, nodeA);
+    myGraph.addRelation(nodeB, nodeE);
+    myGraph.addRelation(nodeE, nodeC);
 
-    // myGraph.addRelation(nodeB, nodeE);
-    // myGraph.addRelation(nodeE, nodeC);
-    //
-    // myGraph.addRelation(nodeF,nodeA);
-    // myGraph.addRelation(nodeF,nodeC);
-    // myGraph.addRelation(nodeF,nodeD);
+    myGraph.addRelation(nodeF, nodeA);
+    myGraph.addRelation(nodeF, nodeC);
+    myGraph.addRelation(nodeF, nodeD);
+    myGraph.addRelation(nodeF, nodeB);
 
 
     // console.log("voisins de A");
@@ -173,7 +172,7 @@ function initBuffers() {
     // indices.push(values[1]);
     // colors.push(values[2]);
 
-    bind([pointsIndices,points,colors2],[addedPts,colorLine,lineIndices],edges);
+    bind([pointsIndices, points, colors2], [addedPts, colorLine, lineIndices], edges);
     // vertexBuffer = getVertexBufferWithVertices(vertices);
     // colorBuffer = getVertexBufferWithVertices(colors);
     // indexBuffer = getIndexBufferWithIndices(indices);
@@ -530,7 +529,7 @@ function addPointOnGLScene(pX, pY) {
         // console.log(myGraph.getNodeByName('AD'));
 
         //for bind
-        vertices=edges[0];
+        vertices = edges[0];
         indices = edges[1];
         colors = edges[2];
         // vertices.push(edges[0]);
@@ -538,18 +537,21 @@ function addPointOnGLScene(pX, pY) {
         // colors.push(edges[2]);
 
 
-
         tstColor = [0.0, 0.0, 0.0, 1.0];
         // pushPtsGlobal(newsPts, tstColor);
-        allNodes= myGraph.getNodes();
-        for(var key in allNodes)
-        {
-            pushPtsGlobalSimple(allNodes[key].dot.getPos(),tstColor);
+        allNodes = myGraph.getNodes();
+        for (var key in allNodes) {
+            pushPtsGlobalSimple(allNodes[key].dot.getPos(), tstColor);
         }
         console.log("Numbers of nodes:");
         console.log(myGraph.countNodes());
         myGraph.showNodes();
 
+        console.log("DISTANCE CALC");
+        var testNode = myGraph.getNodeByName("A");
+        console.log(testNode.dot.getPos());
+        var theDist = distLinePts([[addedPts[0], addedPts[1]], [addedPts[3], addedPts[4]]], [testNode.dot.getPos()[0], testNode.dot.getPos()[1]]);
+        console.log(theDist);
 
     }
 
@@ -558,7 +560,7 @@ function addPointOnGLScene(pX, pY) {
     var point = [pointsIndices, points, colors2];
     var fline = [addedPts, colorLine, lineIndices];
     //update buffers
-    bind(point, fline, [vertices,indices,colors]);
+    bind(point, fline, [vertices, indices, colors]);
 }
 //add one pts in global point list
 function pushPtsGlobalSimple(pts, color) {

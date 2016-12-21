@@ -2,6 +2,24 @@
  * Created by Lancelot on 20.12.2016.
  */
 
+//distance between pt and line
+//line=[[x1,y1],[x2,y2]]
+function distLinePts(line,point)
+{
+    //y=bx+d
+    b = (line[0][1] - line[1][1]) / (line[0][0] - line[1][0]);
+    //d=y-bx
+    d = line[0][1] - b * line[0][0];
+
+    console.log("d="+d);
+    console.log("b="+b);
+    console.log(line);
+    // console.log(vectorMagnitude(b)); //<==== HERE THE PROBLEM
+    var dist=(b*point[0]-point[1]+d)/(Math.sqrt(1+Math.pow(b,2)));
+
+    return dist;
+}
+
 //where line=[[x1,y1],[x2,y2]]
 function intersection(line1, foldLine) {
     //---fold line equation---
@@ -45,12 +63,13 @@ function validIntersec(intersec, corners) {
         //as AB//AC => AC(x)/AB(x) == AC(y)/AB(y)
         //1st test if parallel => alpha=180°
         angleRad = Math.acos((ab[0] * ac[0] + ab[1] * ac[1]) / (vectorMagnitude(ab) * vectorMagnitude(ac)));
-        //test to avoid NaN
-        if(angleRad<0.0001 || isNaN(angleRad))
-            angleRad=0;
+
+        //test to avoid NaN or very small values
+        if (angleRad < 0.0001 || isNaN(angleRad))
+            angleRad = 0;
 
         angle = angleRad * 180 / Math.PI;
-        if (angle >= 0 && angle <=0.0001) {
+        if (angle >= 0 && angle <= 0.0001) {
             //2nd test if x*AB=AC with x[0,1]
             var rat = (ab[0] == 0) ? (ac[1] / ab[1]) : (ac[0] / ab[0]);
 
@@ -58,15 +77,7 @@ function validIntersec(intersec, corners) {
                 //valid
                 return true;
             }
-            // else {
-            //     console.log("INVALID RATIO:\nrat=" + rat);
-            // }
         }
-        // else {
-        //     console.log("INVALID ANGLE !=0");
-        //     console.log("angleRad=" + angleRad);
-        //     console.log("angle=" + angle);
-        // }
     }
 
 
