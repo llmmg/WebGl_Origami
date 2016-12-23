@@ -496,46 +496,19 @@ function addPointOnGLScene(pX, pY) {
     addedPts.push(pX, pY, 0.1);
     lineIndices.push(lineIndices.length);
     colorLine.push(1.0, 0.0, 0.5, 1.0);
-    // initBuffers();
 
     //add new points only if a line is drawn
     if (addedPts.length >= 5) {
-        // tmp = findNewPoints(points);
-        // // // test pts from each sides+
-        //
-        // sepPts = separatePoints(tmp, points);
-        //
-        // somePts = axialSymmetry(sepPts[1], tmp);
-        //
-        // //add pts in global point list
-        // for (i = 0; i < tmp.length; i++) {
-        //     points.push(tmp[i][0], tmp[i][1], 0.1);
-        //     colors2.push(1.0, 0.0, 0.0, 1.0);
-        //     pointsIndices.push(pointsIndices.length);
-        // }
-        // derpColors = [1.0, 0.4, 0.3, 1.0];
-        // pushPtsGlobal(somePts, derpColors);
-        // derpColors2 = [0.0, 0.0, 1.0, 1.0];
-        // pushPtsGlobal(sepPts[0], derpColors2);
-        // derpColors2 = [1.0, 0.0, 1.0, 1.0];
-        // pushPtsGlobal(sepPts[1], derpColors2);
+        pointsIndices=[];
+        points=[];
 
-        //---TESTSTESETSETSET-----
         newsPts = myGraph.addIntersections(addedPts);
         edges = myGraph.segments();
-        // myGraph.showNodes();
-
-        // console.log(myGraph.getNodeByName('A'));
-        // console.log(myGraph.getNodeByName('AD'));
 
         //for bind
         vertices = edges[0];
         indices = edges[1];
         colors = edges[2];
-        // vertices.push(edges[0]);
-        // indices.push(edges[1]);
-        // colors.push(edges[2]);
-
 
         tstColor = [0.0, 0.0, 0.0, 1.0];
         // pushPtsGlobal(newsPts, tstColor);
@@ -543,19 +516,8 @@ function addPointOnGLScene(pX, pY) {
         for (var key in allNodes) {
             pushPtsGlobalSimple(allNodes[key].dot.getPos(), tstColor);
         }
-        // console.log("Numbers of nodes:");
-        // console.log(myGraph.countNodes());
-        myGraph.showNodes();
-
-        // console.log("DISTANCE CALC");
-        // var testNode = myGraph.getNodeByName("A");
-        // console.log(testNode.dot.getPos());
-        // var theDist = distLinePts([[addedPts[0], addedPts[1]], [addedPts[3], addedPts[4]]], [testNode.dot.getPos()[0], testNode.dot.getPos()[1]]);
-        // console.log(theDist);
-
     }
 
-    // edges = myGraph.segments();
 
     var point = [pointsIndices, points, colors2];
     var fline = [addedPts, colorLine, lineIndices];
