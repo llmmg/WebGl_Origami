@@ -128,20 +128,22 @@ class Graph {
 
                         //add to return
                         newIntesectPts.push(interNode.dot.getPos());
-
                         nodesToInserts.push([curNode, curNeig[n], interNode]);
+
                     }
-                    else{
+                    else {
                         // console.log("INVALID INTERSECTION");
                         // console.log(curNode.name+"-"+curNeig[n].name);
                     }
-                }else
-                {
+                } else {
                     // console.log("ALREDY VISITED");
                     // console.log(curNeig[n].name);
                 }
             }
+            console.log("PROD_VECT "+this.nodes[node].name);
+            vectProd(this.nodes[node],foldPoints);
         }
+
         //insert new nodes in graph
         for (let i = 0; i < nodesToInserts.length; i++) {
             this.insertNode(nodesToInserts[i][0], nodesToInserts[i][1], nodesToInserts[i][2]);

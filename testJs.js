@@ -130,23 +130,23 @@ function initBuffers() {
     myGraph.addNode(nodeB);
     myGraph.addNode(nodeC);
     myGraph.addNode(nodeD);
-    ;
-    myGraph.addNode(nodeE);
-    myGraph.addNode(nodeF);
+
+    // myGraph.addNode(nodeE);
+    // myGraph.addNode(nodeF);
 
     myGraph.addRelation(nodeA, nodeB);
     myGraph.addRelation(nodeB, nodeC);
 
     myGraph.addRelation(nodeC, nodeD);
     myGraph.addRelation(nodeD, nodeA);
-
-    myGraph.addRelation(nodeB, nodeE);
-    myGraph.addRelation(nodeE, nodeC);
-
-    myGraph.addRelation(nodeF, nodeA);
-    myGraph.addRelation(nodeF, nodeC);
-    myGraph.addRelation(nodeF, nodeD);
-    myGraph.addRelation(nodeF, nodeB);
+    //
+    // myGraph.addRelation(nodeB, nodeE);
+    // myGraph.addRelation(nodeE, nodeC);
+    //
+    // myGraph.addRelation(nodeF, nodeA);
+    // myGraph.addRelation(nodeF, nodeC);
+    // myGraph.addRelation(nodeF, nodeD);
+    // myGraph.addRelation(nodeF, nodeB);
 
 
     // console.log("voisins de A");
@@ -543,15 +543,15 @@ function addPointOnGLScene(pX, pY) {
         for (var key in allNodes) {
             pushPtsGlobalSimple(allNodes[key].dot.getPos(), tstColor);
         }
-        console.log("Numbers of nodes:");
-        console.log(myGraph.countNodes());
-        myGraph.showNodes();
+        // console.log("Numbers of nodes:");
+        // console.log(myGraph.countNodes());
+        // myGraph.showNodes();
 
-        console.log("DISTANCE CALC");
-        var testNode = myGraph.getNodeByName("A");
-        console.log(testNode.dot.getPos());
-        var theDist = distLinePts([[addedPts[0], addedPts[1]], [addedPts[3], addedPts[4]]], [testNode.dot.getPos()[0], testNode.dot.getPos()[1]]);
-        console.log(theDist);
+        // console.log("DISTANCE CALC");
+        // var testNode = myGraph.getNodeByName("A");
+        // console.log(testNode.dot.getPos());
+        // var theDist = distLinePts([[addedPts[0], addedPts[1]], [addedPts[3], addedPts[4]]], [testNode.dot.getPos()[0], testNode.dot.getPos()[1]]);
+        // console.log(theDist);
 
     }
 

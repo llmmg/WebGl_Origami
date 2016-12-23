@@ -2,20 +2,41 @@
  * Created by Lancelot on 20.12.2016.
  */
 
+//foldline[x1,y1,x2,y2]
+/**
+ *  return vectorial product of a 1st foldLine pt to node and foldline Vector
+ *  so it possible to know what side of foldLine a pt is AND which pts to "fold"
+ *
+ * @param node - object Node to make vectorial product with
+ * @param foldLine - 2 points, 4 values [x1,y1,x2,y2]
+ */
+function vectProd(node, foldLine) {
+
+    //AB=OB-OA
+    var vectU = [foldLine[3] - foldLine[0], foldLine[4] - foldLine[1]];
+    var vectV = [foldLine[0] - node.dot.getPos()[0], foldLine[1] - node.dot.getPos()[1]];
+
+    //Z composant of vectorial product (VectU CROSS vectV)
+    //z=ux*vy-uy*ux
+    var myZ=vectU[0]*vectV[1]-vectU[1]*vectV[0];
+    console.log("value=>"+myZ);
+
+    return myZ;
+}
+
 //distance between pt and line
 //line=[[x1,y1],[x2,y2]]
-function distLinePts(line,point)
-{
+function distLinePts(line, point) {
     //y=bx+d
     b = (line[0][1] - line[1][1]) / (line[0][0] - line[1][0]);
     //d=y-bx
     d = line[0][1] - b * line[0][0];
 
-    console.log("d="+d);
-    console.log("b="+b);
+    console.log("d=" + d);
+    console.log("b=" + b);
     console.log(line);
     // console.log(vectorMagnitude(b)); //<==== HERE THE PROBLEM
-    var dist=(b*point[0]-point[1]+d)/(Math.sqrt(1+Math.pow(b,2)));
+    var dist = (b * point[0] - point[1] + d) / (Math.sqrt(1 + Math.pow(b, 2)));
 
     return dist;
 }
@@ -47,7 +68,7 @@ function intersection(line1, foldLine) {
 }
 
 //intersec is a point ([x,y])
-//check if intersec between one corners pair
+//check if intersec between two corners
 function validIntersec(intersec, corners) {
 
     for (let j = 0; j < corners.length; j++) {
