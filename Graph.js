@@ -140,8 +140,19 @@ class Graph {
                     // console.log(curNeig[n].name);
                 }
             }
-            console.log("PROD_VECT "+this.nodes[node].name);
-            vectProd(this.nodes[node],foldPoints);
+            // console.log("PROD_VECT "+this.nodes[node].name);
+            var screwDir=vectProd(this.nodes[node],foldPoints);
+            if(screwDir<0)
+            {
+                //convert to good format list to list[x,y]...
+                var axialLine=[[foldPoints[0],foldPoints[1]],[foldPoints[3],foldPoints[4]]];
+                var reversedCoords=axialSymmetry(this.nodes[node].dot.getPos(),axialLine);
+
+                console.log(reversedCoords);
+
+                //Do mirrors operation
+                this.nodes[node].dot.setPos(reversedCoords[0]);
+            }
         }
 
         //insert new nodes in graph

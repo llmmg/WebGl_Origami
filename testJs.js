@@ -205,45 +205,45 @@ function bind(pointStuff, foldLine, segments) {
     lineColorBuff = getVertexBufferWithVertices(foldLine[1]);
     lineIndexBuff = getIndexBufferWithIndices(foldLine[2]);
 }
-//do axial simetry of ptsToInverse by intersectPts line
-function axialSymmetry(ptsToInverse, intersectPts) {
-
-    reversedPts = []
-    //f(0)=b
-    b = y0ofMyLine(intersectPts[0], intersectPts[1]);
-
-    console.log("y= " + b);
-    console.log("intersection:" + intersectPts[0] + ";" + intersectPts[1]);
-
-    for (var i = 0; i < ptsToInverse.length; i++) {
-        //dy/dx (slope)
-        p = (intersectPts[0][1] - intersectPts[1][1]) / (intersectPts[0][0] - intersectPts[1][0]);
-
-
-        newX = ((1 - p * p) * ptsToInverse[i][0] + 2 * p * ptsToInverse[i][1] - 2 * b * p) / (1 + p * p);
-        newY = (2 * p * ptsToInverse[i][0] - (1 - p * p) * ptsToInverse[i][1] + 2 * b) / (1 + p * p)
-
-        reversedPts.push([newX, newY]);
-    }
-
-    return reversedPts;
-}
-
-//return y of f(0) where ptA and ptB are pts of the f(x) line
-function y0ofMyLine(ptA, ptB) {
-    // AB=OB-OA
-    vAb = [];
-    vAb.push(ptB[0] - ptA[0]);
-    vAb.push(ptB[1] - ptA[1]);
-
-    //0=aX+vAbX*alpha
-    alpha = (-ptA[0] / vAb[0]);
-
-    //found y
-    y = ptA[1] + alpha * vAb[1];
-
-    return y;
-}
+// //do axial simetry of ptsToInverse by intersectPts line
+// function axialSymmetry(ptsToInverse, intersectPts) {
+//
+//     reversedPts = []
+//     //f(0)=b
+//     b = y0ofMyLine(intersectPts[0], intersectPts[1]);
+//
+//     console.log("y= " + b);
+//     console.log("intersection:" + intersectPts[0] + ";" + intersectPts[1]);
+//
+//     for (var i = 0; i < ptsToInverse.length; i++) {
+//         //dy/dx (slope)
+//         p = (intersectPts[0][1] - intersectPts[1][1]) / (intersectPts[0][0] - intersectPts[1][0]);
+//
+//
+//         newX = ((1 - p * p) * ptsToInverse[i][0] + 2 * p * ptsToInverse[i][1] - 2 * b * p) / (1 + p * p);
+//         newY = (2 * p * ptsToInverse[i][0] - (1 - p * p) * ptsToInverse[i][1] + 2 * b) / (1 + p * p)
+//
+//         reversedPts.push([newX, newY]);
+//     }
+//
+//     return reversedPts;
+// }
+//
+// //return y of f(0) where ptA and ptB are pts of the f(x) line
+// function y0ofMyLine(ptA, ptB) {
+//     // AB=OB-OA
+//     vAb = [];
+//     vAb.push(ptB[0] - ptA[0]);
+//     vAb.push(ptB[1] - ptA[1]);
+//
+//     //0=aX+vAbX*alpha
+//     alpha = (-ptA[0] / vAb[0]);
+//
+//     //found y
+//     y = ptA[1] + alpha * vAb[1];
+//
+//     return y;
+// }
 
 //put all pts that are on one side of fold line in a list and all other in another list
 function separatePoints(intersecPts, layerPts) {
@@ -545,7 +545,7 @@ function addPointOnGLScene(pX, pY) {
         }
         // console.log("Numbers of nodes:");
         // console.log(myGraph.countNodes());
-        // myGraph.showNodes();
+        myGraph.showNodes();
 
         // console.log("DISTANCE CALC");
         // var testNode = myGraph.getNodeByName("A");

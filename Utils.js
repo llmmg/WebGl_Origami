@@ -2,9 +2,55 @@
  * Created by Lancelot on 20.12.2016.
  */
 
+//do axial simetry of ptsToInverse by intersectPts line
+/**
+ *
+ * @param ptsToInverse [x,y]
+ * @param intersectPts [1][x,y]
+ * @returns {Array} [x,y,z] z=0.1 now
+ */
+function axialSymmetry(ptsToInverse, intersectPts) {
+
+    var reversedPts = []
+    //f(0)=b
+    var b = y0ofMyLine(intersectPts[0], intersectPts[1]);
+
+    // console.log("y= " + b);
+    // console.log("intersection:" + intersectPts[0] + ";" + intersectPts[1]);
+
+    // for (var i = 0; i < ptsToInverse.length; i++) {
+        //dy/dx (slope)
+        p = (intersectPts[0][1] - intersectPts[1][1]) / (intersectPts[0][0] - intersectPts[1][0]);
+
+        var newX = ((1 - p * p) * ptsToInverse[0] + 2 * p * ptsToInverse[1] - 2 * b * p) / (1 + p * p);
+        var newY = (2 * p * ptsToInverse[0] - (1 - p * p) * ptsToInverse[1] + 2 * b) / (1 + p * p);
+
+        reversedPts.push([newX, newY,0.1]);
+    // }
+
+    return reversedPts;
+}
+
+//return y of f(0) where ptA and ptB are pts of the f(x) line
+function y0ofMyLine(ptA, ptB) {
+    // AB=OB-OA
+    vAb = [];
+    vAb.push(ptB[0] - ptA[0]);
+    vAb.push(ptB[1] - ptA[1]);
+
+    //0=aX+vAbX*alpha
+    alpha = (-ptA[0] / vAb[0]);
+
+    //found y
+    y = ptA[1] + alpha * vAb[1];
+
+    return y;
+}
+
+
 //foldline[x1,y1,x2,y2]
 /**
- *  return vectorial product of a 1st foldLine pt to node and foldline Vector
+ *  return a number (z value) vectorial product of a 1st foldLine pt to node and foldline Vector
  *  so it possible to know what side of foldLine a pt is AND which pts to "fold"
  *
  * @param node - object Node to make vectorial product with
@@ -19,7 +65,6 @@ function vectProd(node, foldLine) {
     //Z composant of vectorial product (VectU CROSS vectV)
     //z=ux*vy-uy*ux
     var myZ=vectU[0]*vectV[1]-vectU[1]*vectV[0];
-    console.log("value=>"+myZ);
 
     return myZ;
 }
