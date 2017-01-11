@@ -161,7 +161,10 @@ function bind(pointStuff, foldLine, segments) {
     lineColorBuff = getVertexBufferWithVertices(foldLine[1]);
     lineIndexBuff = getIndexBufferWithIndices(foldLine[2]);
 }
-
+function unDo() {
+    myGraph.unDo();
+    refresh();
+}
 function drawScene() {
 
     glContext.clearColor(0.9, 0.9, 0.9, 1.0);
@@ -194,6 +197,23 @@ function drawScene() {
     drawFoldLine();
 
 }
+function refresh() {
+    //get stuff for lines (segments)
+    edges = myGraph.segments();
+
+    vertices = edges[0];
+    indices = edges[1];
+    colors = edges[2];
+
+    tstColor = [0.0, 1.0, 0.0, 1.0];
+    // pushPtsGlobal(newsPts, tstColor);
+    allNodes = myGraph.getNodes();
+    for (var key in allNodes) {
+        pushPtsGlobalSimple(allNodes[key].dot.getPos(), tstColor);
+    }
+
+    bind([pointsIndices, points, colors2], [addedPts, colorLine, lineIndices], edges);
+}
 function addPointOnGLScene(pX, pY) {
 
     if (addedPts.length >= 6) {
@@ -207,8 +227,8 @@ function addPointOnGLScene(pX, pY) {
 
     //add new points only if a line is drawn
     if (addedPts.length >= 5) {
-        pointsIndices=[];
-        points=[];
+        pointsIndices = [];
+        points = [];
 
         newsPts = myGraph.addIntersections(addedPts);
         edges = myGraph.segments();

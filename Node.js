@@ -36,4 +36,10 @@ class Node{
     {
         return this.neighbours;
     }
+
+    //set pos to last known position
+    undoPos()
+    {
+        this.dot.undoPos();
+    }
 }

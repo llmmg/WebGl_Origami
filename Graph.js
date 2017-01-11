@@ -123,7 +123,8 @@ class Graph {
                     var foldL = [[x1, y1], [x2, y2]];
                     var intersect = intersection([pos, posNext], foldL);
                     if (validIntersec(intersect, [pos, posNext])) {
-                        //add new node
+
+                        //add new node (intersection node)
                         var interNode = new Node(new ADot([intersect[0], intersect[1], 0.1], false), curNode.name + curNeig[n].name);
 
                         //add to return
@@ -131,31 +132,24 @@ class Graph {
                         nodesToInserts.push([curNode, curNeig[n], interNode]);
 
                     }
-                    else {
-                        // console.log("INVALID INTERSECTION");
-                        // console.log(curNode.name+"-"+curNeig[n].name);
-                    }
-                } else {
-                    // console.log("ALREDY VISITED");
-                    // console.log(curNeig[n].name);
                 }
             }
-            // console.log("PROD_VECT "+this.nodes[node].name);
-            var screwDir=vectProd(this.nodes[node],foldPoints);
-            if(screwDir<0)
-            {
-                //convert to good format list to list[x,y]...
-                var axialLine=[[foldPoints[0],foldPoints[1]],[foldPoints[3],foldPoints[4]]];
-                var reversedCoords=axialSymmetry(this.nodes[node].dot.getPos(),axialLine);
 
-                console.log(reversedCoords);
+            //vectorial product
+            var screwDir = vectProd(this.nodes[node], foldPoints);
+            if (screwDir < 0) {
+                //convert to "good" format list to list[x,y]...
+                var axialLine = [[foldPoints[0], foldPoints[1]], [foldPoints[3], foldPoints[4]]];
+                var reversedCoords = axialSymmetry(this.nodes[node].dot.getPos(), axialLine);
+
+                // console.log(reversedCoords);
 
                 //Do mirrors operation
                 this.nodes[node].dot.setPos(reversedCoords[0]);
             }
         }
 
-        //insert new nodes in graph
+        //insert new nodes in graph (intersection nodes)
         for (let i = 0; i < nodesToInserts.length; i++) {
             this.insertNode(nodesToInserts[i][0], nodesToInserts[i][1], nodesToInserts[i][2]);
         }
@@ -179,5 +173,14 @@ class Graph {
 
         //remove relation between curNode and curNeig[i]
         this.delRelation(nodeA, nodeB);
+    }
+
+    //undo "ctrl+z" for folds
+    unDo()
+    {
+        for(var node in this.nodes)
+        {
+            this.nodes[node].undoPos();
+        }
     }
 }

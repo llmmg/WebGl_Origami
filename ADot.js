@@ -13,6 +13,9 @@ class ADot{
         this.position=[];
         this.position=position;
         this.flag=flag;
+
+        //undo test - stack (list) of old positions
+        this.oldPos=[];
     }
 
     //return [x,y,z]
@@ -21,9 +24,18 @@ class ADot{
         return this.position;
     }
     //newPos=[x,y,z]
-    setPos(newPos)
-    {
-        this.position=newPos;
+    setPos(newPos) {
+        this.oldPos.push(this.position);
+        this.position = newPos;
+    }
+
+    //undo new position (set position to old position)
+    undoPos(){
+        var old=this.oldPos.pop();
+        if(old!=undefined)
+        {
+            this.position=old;
+        }
     }
 
 }
