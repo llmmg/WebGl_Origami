@@ -5,7 +5,7 @@
 // get a reference to the webgl canvas
 var myCanvas = document.getElementById('webgl-canvas');
 myCanvas.onmousemove = handleMouseMove;
-myCanvas.onmousedown = handleMouseDown;
+// myCanvas.onmousedown = handleMouseDown;
 myCanvas.onmouseup = handleMouseUp;
 myCanvas.onmousewheel = handleMouseWheel;
 
