@@ -6,6 +6,8 @@ class Graph {
         //dict of all nodes
         this.nodes = {};
 
+        //test for undo function
+        this.history=[];
     }
 
     //add new dot
@@ -57,6 +59,7 @@ class Graph {
         var visitedNodes = [];
 
         //each node in graph
+        //graph traversal => follow relations
         for (var node in this.nodes) {
 
             var curNode = this.nodes[node];
@@ -98,6 +101,9 @@ class Graph {
         var visitedNodes = [];
         var newIntesectPts = [];
         var nodesToInserts = []; //[A,B,newNode]
+
+        //tmp list to add mirrored pts in history list
+        var currentNodes=[];
 
         for (var node in this.nodes) {
 
@@ -146,8 +152,14 @@ class Graph {
 
                 //Do mirrors operation
                 this.nodes[node].dot.setPos(reversedCoords[0]);
+
+                //add current point in tmp list to add in history later
+                currentNodes.push(this.nodes[node].name);
             }
         }
+        //add mirrored pts to history list
+        this.history.push(currentNodes);
+
 
         //insert new nodes in graph (intersection nodes)
         for (let i = 0; i < nodesToInserts.length; i++) {
@@ -178,9 +190,14 @@ class Graph {
     //undo "ctrl+z" for folds
     unDo()
     {
-        for(var node in this.nodes)
+        // for(var node in this.nodes)
+        // {
+        //     this.nodes[node].undoPos();
+        // }
+        var toReverse=this.history.pop();
+        for(let m=0;m<toReverse.length;m++)
         {
-            this.nodes[node].undoPos();
+            this.nodes[toReverse[m]].undoPos();
         }
     }
 }
