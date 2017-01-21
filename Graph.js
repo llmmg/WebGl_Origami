@@ -6,13 +6,34 @@ class Graph {
         //dict of all nodes
         this.nodes = {};
 
-        //test for undo function
-        this.history=[];
+        //for undo function
+        this.history = [];
+        //boolean to block undo function to one use at the time
+        this.canUnDo = false;
+
+
+        //--- Undone stuffs---
+        //Relations to restore
+        this.relationsHistory = [];
+        //nodes to delete
+        this.intersectionsNodes = [];
+
+        //TEST2 --- STORE GRAPH TO RESTOR ON UNDO
+        this.historyState = [];
     }
 
     //add new dot
     addNode(newNode) {
         this.nodes[newNode.name] = newNode;
+    }
+
+    //remove node
+    delNode(nodeToDel) {
+        var neighBourds = nodeToDel.getNeig();
+        for (let v = 0; v < nodeToDel.getNeig().length; v++) {
+            nodeToDel.removeNeig(neighBourds[v]);
+        }
+        delete this.nodes[nodeToDel.name];
     }
 
     showNodes() {
@@ -88,10 +109,25 @@ class Graph {
                 }
             }
         }
+
         return [vertices, indices, colors];
     }
 
+    //add intersections points between fold line and graph.
+    //add relations between intersections points and old points
+    //Do mirror operation for left part of fold line
     addIntersections(foldPoints) {
+
+        //if the origami is folded then we can undo the action one time after that
+        this.canUnDo = true;
+
+        //TODO: find out how to do deep copy
+        //TEST2 - store graph state
+        // this.historyState.push(this.clone(this.nodes));
+        this.historyState.push(Object.assign({}, this.nodes));
+        // var tmp = this.clone(tmp, this.nodes);
+        // this.historyState.push(tmp);
+
         //fold line points
         var x1 = foldPoints[0];
         var y1 = foldPoints[1];
@@ -103,7 +139,7 @@ class Graph {
         var nodesToInserts = []; //[A,B,newNode]
 
         //tmp list to add mirrored pts in history list
-        var currentNodes=[];
+        var currentNodes = [];
 
         for (var node in this.nodes) {
 
@@ -157,21 +193,38 @@ class Graph {
                 currentNodes.push(this.nodes[node].name);
             }
         }
-        //add mirrored pts to history list
+        //add mirrored pts to history list == pts to reverse
         this.history.push(currentNodes);
 
+        //test for undo - part relation/intersections
+        var tmpHistNodes = [];
+        var tmpRelHist = [];
 
         //insert new nodes in graph (intersection nodes)
         for (let i = 0; i < nodesToInserts.length; i++) {
             this.insertNode(nodesToInserts[i][0], nodesToInserts[i][1], nodesToInserts[i][2]);
+
+            //save nodes in history
+            tmpHistNodes.push(nodesToInserts[i][2]);
+            tmpRelHist.push([nodesToInserts[i][0], nodesToInserts[i][1]]);
         }
+
 
         //add relations between new nodes (fold line)
         for (let i = 0; i < nodesToInserts.length; i++) {
             if (i + 1 < nodesToInserts.length) {
                 this.addRelation(nodesToInserts[i][2], nodesToInserts[i + 1][2]);
+                //store in history
+                tmpRelHist.push([nodesToInserts[i][2], nodesToInserts[i + 1][2]]);
             }
         }
+
+        //relations to restore - list of lists of tuples [a,b]
+        this.relationsHistory.push(tmpRelHist);
+        //nodes to delete - list of lists
+        this.intersectionsNodes.push(tmpHistNodes);
+
+
         return newIntesectPts;
     }
 
@@ -185,19 +238,75 @@ class Graph {
 
         //remove relation between curNode and curNeig[i]
         this.delRelation(nodeA, nodeB);
+
     }
 
     //undo "ctrl+z" for folds
-    unDo()
-    {
-        // for(var node in this.nodes)
-        // {
-        //     this.nodes[node].undoPos();
-        // }
-        var toReverse=this.history.pop();
-        for(let m=0;m<toReverse.length;m++)
+    unDo() {
+
+        //reverse points
+        if(this.canUnDo)
         {
-            this.nodes[toReverse[m]].undoPos();
+            var toReverse = this.history.pop();
+            for (let m = 0; m < toReverse.length; m++) {
+                this.nodes[toReverse[m]].undoPos();
+            }
+
+            //Cant do it more than once in a row
+            this.canUnDo=false;
         }
+
+        //
+        // //restore relations
+        // var relToRestore = this.relationsHistory.pop();
+        //
+        // // console.log(relToRestore);
+        // for (let p = 0; p < relToRestore.length; p++) {
+        //     this.addRelation(relToRestore[p][0], relToRestore[p][1]);
+        // }
+        //
+        // //del intersections nodes
+        // var nodeToDel = this.intersectionsNodes.pop();
+        // var size = nodeToDel.length;
+        //
+        // for (let o = 0; o < size; o++) {
+        //     this.delNode(nodeToDel[o]);
+        // }
+
+        //TODO: alternativ: store states of whole graph...
+        // this.nodes = null;
+        // var oldGraph = this.historyState.pop();
+        // console.log(oldGraph);
+        //
+        // this.nodes = oldGraph;
+    }
+
+//TEST2 historystate
+
+    clone(target, source) {
+
+        for (let key in source) {
+
+            // Use getOwnPropertyDescriptor instead of source[key] to prevent from trigering setter/getter.
+            let descriptor = Object.getOwnPropertyDescriptor(source, key);
+            if (descriptor.value instanceof String) {
+                target[key] = new String(descriptor.value);
+            }
+            else if (descriptor.value instanceof Array) {
+                target[key] = this.clone([], descriptor.value);
+            }
+            else if (descriptor.value instanceof Object) {
+                let prototype = Reflect.getPrototypeOf(descriptor.value);
+                let cloneObject = this.clone({}, descriptor.value);
+                Reflect.setPrototypeOf(cloneObject, prototype);
+                target[key] = cloneObject;
+            }
+            else {
+                Object.defineProperty(target, key, descriptor);
+            }
+        }
+        let prototype = Reflect.getPrototypeOf(source);
+        Reflect.setPrototypeOf(target, prototype);
+        return target;
     }
 }

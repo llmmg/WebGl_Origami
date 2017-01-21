@@ -96,8 +96,8 @@ function initBuffers() {
     nodeB = new Node(new ADot([0.5, 0.5, 0.1], false), 'B');
     nodeC = new Node(new ADot([0.5, -0.5, 0.1], false), 'C');
     nodeD = new Node(new ADot([-0.5, -0.5, 0.1], false), 'D');
-    nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
-    nodeF = new Node(new ADot([0.0, 0.0, 0.1], false), 'F');
+    // nodeE = new Node(new ADot([0.8, 0.0, 0.1], false), 'E');
+    // nodeF = new Node(new ADot([0.0, 0.0, 0.1], false), 'F');
 
     myGraph.addNode(nodeA);
     myGraph.addNode(nodeB);
@@ -198,6 +198,9 @@ function drawScene() {
 
 }
 function refresh() {
+
+    points=[];
+    pointsIndices=[];
     //get stuff for lines (segments)
     edges = myGraph.segments();
 
@@ -205,14 +208,21 @@ function refresh() {
     indices = edges[1];
     colors = edges[2];
 
-    tstColor = [0.0, 1.0, 0.0, 1.0];
+    tstColor = [1.0, 0.0, 0.0, 1.0];
     // pushPtsGlobal(newsPts, tstColor);
     allNodes = myGraph.getNodes();
     for (var key in allNodes) {
         pushPtsGlobalSimple(allNodes[key].dot.getPos(), tstColor);
     }
 
-    bind([pointsIndices, points, colors2], [addedPts, colorLine, lineIndices], edges);
+    // bind([pointsIndices, points, colors2], [addedPts, colorLine, lineIndices], edges);
+
+
+    var point = [pointsIndices, points, colors2];
+    var fline = [addedPts, colorLine, lineIndices];
+
+    //update buffers
+    bind(point, fline, [vertices, indices, colors]);
 }
 function addPointOnGLScene(pX, pY) {
 
