@@ -5,7 +5,7 @@
 
 body {
 	font-family: 'Open Sans', Arial, serif;
-	background-color: #FFFFFF;
+	background-color: rgba(15, 39, 78, 0.81);
 	font-size: 1em;
 	margin: 0px;
 	padding: 0px 0px 25px 0px;
@@ -65,8 +65,9 @@ h3 img {
 
 canvas {
 	border: 0px solid #000000;
-	background-color: #EEEEEE;
-	margin: 10px auto;
+	background-color: #ffffff;
+	margin: 1% auto;
+	display: block;
 }
 
 .illustration {
