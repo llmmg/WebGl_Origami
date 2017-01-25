@@ -32,6 +32,7 @@ class Node{
         }
     }
 
+    //return list of neighbours
     getNeig()
     {
         return this.neighbours;

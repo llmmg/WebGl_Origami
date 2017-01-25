@@ -199,8 +199,8 @@ function drawScene() {
 }
 function refresh() {
 
-    points=[];
-    pointsIndices=[];
+    points = [];
+    pointsIndices = [];
     //get stuff for lines (segments)
     edges = myGraph.segments();
 
@@ -209,13 +209,10 @@ function refresh() {
     colors = edges[2];
 
     tstColor = [1.0, 0.0, 0.0, 1.0];
-    // pushPtsGlobal(newsPts, tstColor);
     allNodes = myGraph.getNodes();
     for (var key in allNodes) {
         pushPtsGlobalSimple(allNodes[key].dot.getPos(), tstColor);
     }
-
-    // bind([pointsIndices, points, colors2], [addedPts, colorLine, lineIndices], edges);
 
 
     var point = [pointsIndices, points, colors2];
@@ -249,7 +246,6 @@ function addPointOnGLScene(pX, pY) {
         colors = edges[2];
 
         tstColor = [0.0, 0.0, 0.0, 1.0];
-        // pushPtsGlobal(newsPts, tstColor);
         allNodes = myGraph.getNodes();
         for (var key in allNodes) {
             pushPtsGlobalSimple(allNodes[key].dot.getPos(), tstColor);
@@ -264,12 +260,10 @@ function addPointOnGLScene(pX, pY) {
 }
 //add one pts in global point list
 function pushPtsGlobalSimple(pts, color) {
-    // for (i = 0; i < pts.length; i++) {
     points.push(pts[0], pts[1], pts[2]);
     for (j = 0; j < color.length; j++)
         colors2.push(color[j]);
     pointsIndices.push(pointsIndices.length);
-    // }
 }
 //add pts in global point list
 function pushPtsGlobal(pts, col) {
@@ -294,8 +288,6 @@ function drawFoldLine() {
     glContext.vertexAttribPointer(prg.colorAttribute, 4, glContext.FLOAT, false, 0, 0);
 
     if (addedPts.length >= 6) {
-        // console.log("addedpoints size="+addedPts.length);
-        // glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, lineIndexBuff);
         glContext.drawElements(glContext.LINE_STRIP, lineIndices.length, glContext.UNSIGNED_SHORT, 0);
     }
     glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, lineIndexBuff);

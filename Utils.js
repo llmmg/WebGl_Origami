@@ -11,22 +11,17 @@
  */
 function axialSymmetry(ptsToInverse, intersectPts) {
 
-    var reversedPts = []
+    var reversedPts = [];
     //f(0)=b
     var b = y0ofMyLine(intersectPts[0], intersectPts[1]);
 
-    // console.log("y= " + b);
-    // console.log("intersection:" + intersectPts[0] + ";" + intersectPts[1]);
+    //dy/dx (slope)
+    p = (intersectPts[0][1] - intersectPts[1][1]) / (intersectPts[0][0] - intersectPts[1][0]);
 
-    // for (var i = 0; i < ptsToInverse.length; i++) {
-        //dy/dx (slope)
-        p = (intersectPts[0][1] - intersectPts[1][1]) / (intersectPts[0][0] - intersectPts[1][0]);
+    var newX = ((1 - p * p) * ptsToInverse[0] + 2 * p * ptsToInverse[1] - 2 * b * p) / (1 + p * p);
+    var newY = (2 * p * ptsToInverse[0] - (1 - p * p) * ptsToInverse[1] + 2 * b) / (1 + p * p);
 
-        var newX = ((1 - p * p) * ptsToInverse[0] + 2 * p * ptsToInverse[1] - 2 * b * p) / (1 + p * p);
-        var newY = (2 * p * ptsToInverse[0] - (1 - p * p) * ptsToInverse[1] + 2 * b) / (1 + p * p);
-
-        reversedPts.push([newX, newY,0.1]);
-    // }
+    reversedPts.push([newX, newY, 0.1]);
 
     return reversedPts;
 }
@@ -64,7 +59,7 @@ function vectProd(node, foldLine) {
 
     //Z composant of vectorial product (VectU CROSS vectV)
     //z=ux*vy-uy*ux
-    var myZ=vectU[0]*vectV[1]-vectU[1]*vectV[0];
+    var myZ = vectU[0] * vectV[1] - vectU[1] * vectV[0];
 
     return myZ;
 }
@@ -80,7 +75,7 @@ function distLinePts(line, point) {
     console.log("d=" + d);
     console.log("b=" + b);
     console.log(line);
-    // console.log(vectorMagnitude(b)); //<==== HERE THE PROBLEM
+
     var dist = (b * point[0] - point[1] + d) / (Math.sqrt(1 + Math.pow(b, 2)));
 
     return dist;

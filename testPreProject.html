@@ -22,6 +22,7 @@
 
 
 
+
     </script>
     <script id="shader-fs" type="x-shader/x-fragment">
         #ifdef GL_ES
@@ -31,6 +32,7 @@
         void main(void) {
           gl_FragColor = vColor;
         }
+
 
 
     </script>
@@ -61,16 +63,14 @@
 
     canvas.addEventListener('click', function (evt) {
 
-        if(evt.shiftKey)
-        {
+        if (evt.shiftKey) {
             unDo();
-        }else
-        {
+        } else {
             var mousePos = getMousePos(canvas, evt);
             var pX = (mousePos.x - canvas.width / 2.0) / canvas.width * 2.0;
             var pY = (canvas.height / 2.0 - mousePos.y) / canvas.height * 2.0;
-            var message = 'point: ' + pX + ',' + pY;
-            console.log(message);
+//            var message = 'click point: ' + pX + ',' + pY;
+//            console.log(message);
             addPointOnGLScene(pX, pY);
         }
     }, false);
